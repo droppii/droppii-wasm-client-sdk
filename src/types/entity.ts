@@ -194,6 +194,8 @@ export type ConversationItem = {
   draftText: string;
   draftTextTime: number;
   burnDuration: number;
+  maxSeq: number;
+  minSeq: number;
   msgDestructTime: number;
   isPinned: boolean;
   isNotInGroup: boolean;
