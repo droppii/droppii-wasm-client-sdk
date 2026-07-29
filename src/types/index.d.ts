@@ -545,6 +545,13 @@ declare global {
       offset: number,
       count: number
     ) => Promise<string>;
+    getConversationListSplitApp: (
+      operationID: string,
+      offset: number,
+      count: number,
+      applicationType: string,
+      chatCategory: string
+    ) => Promise<string>;
     searchConversation: (
       operationID: string,
       searchParams: string

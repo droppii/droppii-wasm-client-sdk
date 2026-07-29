@@ -58,6 +58,7 @@ import {
   SignalingInviteParams,
   SoundMsgParamsByURL,
   SplitConversationParams,
+  SplitConversationAppParams,
   TransferGroupParams,
   TypingUpdateParams,
   UploadFileParams,
@@ -967,6 +968,22 @@ class SDK extends Emitter {
       'getConversationListSplit ',
       window.getConversationListSplit,
       [operationID, data.offset, data.count]
+    );
+  };
+  getConversationListSplitApp = (
+    data: SplitConversationAppParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<ConversationItem[]>(
+      'getConversationListSplitApp ',
+      window.getConversationListSplitApp,
+      [
+        operationID,
+        data.offset,
+        data.count,
+        data.applicationType,
+        data.chatCategory,
+      ]
     );
   };
   // searchConversation = (data: SplitConversationParams, operationID = uuidv4()) => {
