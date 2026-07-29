@@ -59,6 +59,7 @@ import {
   SoundMsgParamsByURL,
   SplitConversationParams,
   SplitConversationAppParams,
+  GetPinnedMessageListParams,
   TransferGroupParams,
   TypingUpdateParams,
   UploadFileParams,
@@ -89,8 +90,10 @@ import {
   GroupApplicationItem,
   GroupItem,
   GroupMemberItem,
+  GetPinnedMessageListResult,
   IMConfig,
   MessageItem,
+  PinnedMsgInfo,
   PublicUserItem,
   RtcInviteResults,
   SearchedFriendsInfo,
@@ -580,6 +583,41 @@ class SDK extends Emitter {
       data.conversationID,
       data.clientMsgID,
     ]);
+  };
+
+  pinMsg = <T>(data: AccessMessageParams, operationID = uuidv4()) => {
+    return this._invoker<T>('pinMsg', window.pinMsg, [
+      operationID,
+      data.conversationID,
+      data.clientMsgID,
+    ]);
+  };
+
+  unpinMsg = <T>(data: AccessMessageParams, operationID = uuidv4()) => {
+    return this._invoker<T>('unpinMsg', window.unpinMsg, [
+      operationID,
+      data.conversationID,
+      data.clientMsgID,
+    ]);
+  };
+
+  getPinnedMsgs = (conversationID: string, operationID = uuidv4()) => {
+    return this._invoker<PinnedMsgInfo[]>(
+      'getPinnedMsgs',
+      window.getPinnedMsgs,
+      [operationID, conversationID]
+    );
+  };
+
+  getPinnedMessageList = (
+    params: GetPinnedMessageListParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<GetPinnedMessageListResult>(
+      'getPinnedMessageList',
+      window.getPinnedMessageList,
+      [operationID, JSON.stringify(params)]
+    );
   };
 
   setConversation = <T>(

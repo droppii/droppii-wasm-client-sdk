@@ -157,6 +157,11 @@ export type SplitConversationAppParams = {
   applicationType: string;
   chatCategory: string;
 };
+export type GetPinnedMessageListParams = {
+  conversationID: string;
+  offset: number;
+  pageSize: number;
+};
 export type SetConversationDraftParams = {
   conversationID: string;
   draftText: string;

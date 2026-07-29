@@ -383,6 +383,24 @@ declare global {
       conversationID: string,
       clientMsgID: string
     ) => Promise<string>;
+    pinMsg: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string
+    ) => Promise<string>;
+    unpinMsg: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string
+    ) => Promise<string>;
+    getPinnedMsgs: (
+      operationID: string,
+      conversationID: string
+    ) => Promise<string>;
+    getPinnedMessageList: (
+      operationID: string,
+      getPinnedMessageListOptions: string
+    ) => Promise<string>;
     setConversationPrivateChat: (
       operationID: string,
       conversationID: string,

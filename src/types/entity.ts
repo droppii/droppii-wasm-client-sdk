@@ -401,6 +401,25 @@ export type RevokedInfo = {
   ex: string;
 };
 
+export type MessagePinnedInfo = {
+  conversationID: string;
+  seq: number;
+  clientMsgID: string;
+  serverMsgID: string;
+  operatorUserID: string;
+  operatorNickname: string;
+  pinnedTime: number;
+  isPinned: boolean;
+};
+
+export type PinnedMsgInfo = {
+  seq: number;
+  pinnedByUserID: string;
+  pinnedTime: number;
+  clientMsgID: string;
+  serverMsgID: string;
+};
+
 export type ReceiptInfo = {
   userID: string;
   groupID: string;
@@ -432,6 +451,13 @@ export type AdvancedGetMessageResult = {
   errCode: number;
   errMsg: string;
   messageList: MessageItem[];
+};
+
+export type GetPinnedMessageListResult = {
+  messageList: MessageItem[];
+  totalCount: number;
+  remainingPinCount: number;
+  isEnd: boolean;
 };
 
 export type RtcInvite = {
