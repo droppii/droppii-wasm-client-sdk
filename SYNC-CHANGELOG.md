@@ -1,5 +1,17 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Re-audit 2026-07-29 — Fix field thiếu từ PR#20-22 (Core dev vẫn ở PR#42, `902c93f1`)
+
+Core `dev` HEAD không đổi so với lần sync trước (vẫn PR#42). Đây là audit lại toàn bộ 33 PR đã bị skip (#3–#42 trừ 5 PR đã port), không phải sync PR mới.
+
+Phát hiện 1 gap: field `PeerType` (Go: `pkg/db/model_struct/data_model_struct.go`, `json:"peerType,omitempty"`) được thêm vào struct `LocalConversation` từ PR#20 (`feat/New-func-GetConversationListSplitApp`), nhưng lúc đó **chưa** có export `js.Global().Set` nào ở `wasm/` — nên đúng theo tiêu chí "touches wasm/" của audit, PR#20-22 bị skip hợp lý ở lần trước. Export thực tế (`getConversationListSplitApp`) chỉ xuất hiện ở PR#27 — PR này đã được port trước đó, nhưng field `peerType` bị bỏ sót khi viết type `ConversationItem`.
+
+**Đã fix:** thêm `peerType?: string` vào `ConversationItem` (`src/types/entity.ts`). Không cần file nào khác (method `getConversationListSplitApp()` và type đã tồn tại sẵn từ lần port PR#27).
+
+Đã re-diff toàn bộ 33 PR còn lại (#3, #5, #6, #8-22, #24-26, #28-29, #32-38, #40-42) trực tiếp từng PR so với parent đầu tiên trên path `wasm/` — không phát hiện thêm gap nào khác. Toàn bộ vẫn đúng như audit trước: không chạm `wasm/`, hoặc field/logic nội bộ không lộ ra JS-facing signature.
+
+Version package: `0.1.0` → `0.1.1` (patch — chỉ bổ sung 1 optional field, không đổi API).
+
 ## Sync 2026-07-29 — Core dev đến PR#42 (`902c93f1`)
 
 Nguồn audit: `plans/260729-sync-js-wasm-with-core-dev/plan.md` (audit thủ công PR#3–#42 của Core `dev`, baseline PR#2 `32c543ac`). Core `dev` HEAD tại thời điểm audit đó trùng khớp với HEAD lúc chạy sync này — không có PR mới nào phát sinh thêm.
