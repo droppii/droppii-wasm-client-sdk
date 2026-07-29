@@ -1,6 +1,6 @@
 {
-  "name": "@openim/wasm-client-sdk",
-  "version": "3.9.0",
+  "name": "@droppii-org/wasm-client-sdk",
+  "version": "0.1.0",
   "description": "open im sdk for web",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenIMSDK/Open-IM-SDK-Web-Wasm.git"
+    "url": "git+https://github.com/droppii/droppii-wasm-client-sdk.git"
   },
   "license": "MIT",
   "author": {
@@ -46,9 +46,9 @@
     "openim"
   ],
   "bugs": {
-    "url": "https://github.com/OpenIMSDK/Open-IM-SDK-Web-Wasm/issues"
+    "url": "https://github.com/droppii/droppii-wasm-client-sdk/issues"
   },
-  "homepage": "https://github.com/OpenIMSDK/Open-IM-SDK-Web-Wasm#readme",
+  "homepage": "https://github.com/droppii/droppii-wasm-client-sdk#readme",
   "devDependencies": {
     "@commitlint/cli": "^16.2.4",
     "@commitlint/config-conventional": "^16.2.4",
