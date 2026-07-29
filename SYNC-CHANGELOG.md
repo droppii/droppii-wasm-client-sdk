@@ -21,8 +21,9 @@ Nguồn audit: `plans/260729-sync-js-wasm-with-core-dev/plan.md` (audit thủ c�
 - **PR#5** — chỉ sửa nội bộ schema-guard indexdb, không đổi signature JS.
 - **29 PR còn lại** (#6, #10-16, #18, #20-22, #24-26, #28-29, #32-38, #40-42) — không chạm `wasm/`, hoặc là các PR chuẩn bị/follow-up nội bộ cho #27/#30/#31 (đã kiểm tra riêng #29, #32 — không đụng `wasm/`).
 
-### Xác minh riêng — PR#17 (`wasm_exec.js` shim)
+### Đồng bộ asset — PR#17 (`wasm_exec.js`) và `sql-wasm.wasm`
 
-`assets/wasm_exec.js` của repo này **có tracked trong git** (không phải build artifact tự động lấy về mỗi lần) — đã kiểm tra trực tiếp: import object đã đổi tên `go` → `gojs` và có harness `_gotest` (khớp PR#17). Tuy nhiên **chưa có** `O_DIRECTORY` và `globalThis.path.resolve` mà PR#17 cũng thêm — file có vẻ đã được cập nhật một phần từ một bản build Core khác, không đồng bộ hoàn toàn với PR#17. Theo yêu cầu, **không chỉnh sửa `assets/`** trong lần sync này (asset sẽ được consumer app override lại) — chỉ ghi nhận để theo dõi.
+- **`assets/wasm_exec.js`**: đã copy trực tiếp từ `droppii/openimsdk-core` (`wasm/cmd/static/wasm_exec.js`, Go 1.23 runtime) vào repo này. Trước đó file chỉ có phần đổi tên `go`→`gojs` và harness `_gotest` của PR#17, còn thiếu `O_DIRECTORY` và `globalThis.path.resolve` — giờ đã khớp 100% với Core (diff-verify bằng `diff`, không còn khác biệt).
+- **`assets/sql-wasm.wasm`**: đã kiểm tra checksum SHA-256 so với file `dist/sql-wasm.wasm` trong package `@jlongster/sql.js@1.6.7` (đúng version khai báo trong `package.json`) — khớp byte-for-byte, không cần cập nhật. File này không thuộc Core, là artifact của package `sql.js` độc lập.
 
 Version package: `3.8.2-1` → xem commit bump version riêng.
