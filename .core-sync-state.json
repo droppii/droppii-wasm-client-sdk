@@ -1,0 +1,9 @@
+{
+  "lastSyncedCoreSha": "902c93f156393bf56b081eebe059b53d158dc73c",
+  "lastSyncedCorePr": 42,
+  "lastSyncedAt": "2026-07-29",
+  "jsCommit": null,
+  "portedPrs": [23, 27, 30, 31, 39],
+  "skippedPrs": [3, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 28, 29, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42],
+  "notes": "PR#19 (createButtonMessage) was in a prior audit's port list but confirmed reverted on Core dev (commit 1cd5f0e2) -- correctly skipped, not ported. PR#17 (wasm_exec.js gojs rename) verified partially applied in assets/wasm_exec.js; not modified per scope (assets are consumer-overridden)."
+}
