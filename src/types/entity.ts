@@ -231,6 +231,7 @@ export type MessageItem = {
   textElem?: TextElem;
   urlTextElem?: UrlTextElem;
   logTextElem?: LogTextElem;
+  stickerElem?: StickerElem;
   cardElem?: CardElem;
   pictureElem?: PictureElem;
   soundElem?: SoundElem;
@@ -255,6 +256,9 @@ export type UrlTextElem = {
   urls: string[];
 };
 export type LogTextElem = {
+  content: string;
+};
+export type StickerElem = {
   content: string;
 };
 export type CardElem = {

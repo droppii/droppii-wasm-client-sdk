@@ -89,6 +89,7 @@ export enum MessageType {
   RevokeMessage = 2101,
   UrlTextMessage = 160,
   LogTextMessage = 161,
+  StickerMessage = 162,
 }
 export enum SessionType {
   Single = 1,

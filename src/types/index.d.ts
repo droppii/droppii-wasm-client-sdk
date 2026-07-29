@@ -257,6 +257,10 @@ declare global {
       text: string,
       urls: string
     ) => Promise<string[]>;
+    createStickerMessage: (
+      operationID: string,
+      content: string
+    ) => Promise<string[]>;
     getAllConversationList: (operationID: string) => Promise<string>;
     getOneConversation: (
       operationID: string,

@@ -414,6 +414,17 @@ class SDK extends Emitter {
       }
     );
   };
+  createStickerMessage = (content: string, operationID = uuidv4()) => {
+    return this._invoker<MessageItem>(
+      'createStickerMessage',
+      window.createStickerMessage,
+      [operationID, content],
+      data => {
+        // compitable with old version sdk
+        return data[0];
+      }
+    );
+  };
   createImageMessageByURL = (
     params: ImageMsgParamsByURL,
     operationID = uuidv4()
