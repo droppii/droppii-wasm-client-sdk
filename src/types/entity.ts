@@ -203,6 +203,7 @@ export type ConversationItem = {
   isMsgDestruct: boolean;
   attachedInfo: string;
   ex?: string;
+  peerType?: string;
 };
 export type MessageItem = {
   clientMsgID: string;
