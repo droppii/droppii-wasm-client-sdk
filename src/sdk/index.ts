@@ -300,6 +300,26 @@ class SDK extends Emitter {
       [operationID, JSON.stringify(params)]
     );
   };
+  getAdvancedHistoryMessageListApp = (
+    params: GetAdvancedHistoryMsgParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<AdvancedGetMessageResult>(
+      'getAdvancedHistoryMessageListApp',
+      window.getAdvancedHistoryMessageListApp,
+      [operationID, JSON.stringify(params)]
+    );
+  };
+  getAdvancedHistoryMessageListReverseApp = (
+    params: GetAdvancedHistoryMsgParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<AdvancedGetMessageResult>(
+      'getAdvancedHistoryMessageListReverseApp',
+      window.getAdvancedHistoryMessageListReverseApp,
+      [operationID, JSON.stringify(params)]
+    );
+  };
   getSpecifiedGroupsInfo = (params: string[], operationID = uuidv4()) => {
     return this._invoker<GroupItem[]>(
       'getSpecifiedGroupsInfo',
