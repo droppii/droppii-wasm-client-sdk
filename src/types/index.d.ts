@@ -257,6 +257,10 @@ declare global {
       text: string,
       urls: string
     ) => Promise<string[]>;
+    createStickerMessage: (
+      operationID: string,
+      content: string
+    ) => Promise<string[]>;
     getAllConversationList: (operationID: string) => Promise<string>;
     getOneConversation: (
       operationID: string,
@@ -268,6 +272,14 @@ declare global {
       getAdvancedHistoryMessageListParamsStr: string
     ) => Promise<string>;
     getAdvancedHistoryMessageListReverse: (
+      operationID: string,
+      getAdvancedHistoryMessageListReverseParamsStr: string
+    ) => Promise<string>;
+    getAdvancedHistoryMessageListApp: (
+      operationID: string,
+      getAdvancedHistoryMessageListParamsStr: string
+    ) => Promise<string>;
+    getAdvancedHistoryMessageListReverseApp: (
       operationID: string,
       getAdvancedHistoryMessageListReverseParamsStr: string
     ) => Promise<string>;
@@ -374,6 +386,24 @@ declare global {
       operationID: string,
       conversationID: string,
       clientMsgID: string
+    ) => Promise<string>;
+    pinMsg: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string
+    ) => Promise<string>;
+    unpinMsg: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string
+    ) => Promise<string>;
+    getPinnedMsgs: (
+      operationID: string,
+      conversationID: string
+    ) => Promise<string>;
+    getPinnedMessageList: (
+      operationID: string,
+      getPinnedMessageListOptions: string
     ) => Promise<string>;
     setConversationPrivateChat: (
       operationID: string,
@@ -544,6 +574,13 @@ declare global {
       operationID: string,
       offset: number,
       count: number
+    ) => Promise<string>;
+    getConversationListSplitApp: (
+      operationID: string,
+      offset: number,
+      count: number,
+      applicationType: string,
+      chatCategory: string
     ) => Promise<string>;
     searchConversation: (
       operationID: string,

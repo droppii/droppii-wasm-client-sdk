@@ -58,6 +58,8 @@ import {
   SignalingInviteParams,
   SoundMsgParamsByURL,
   SplitConversationParams,
+  SplitConversationAppParams,
+  GetPinnedMessageListParams,
   TransferGroupParams,
   TypingUpdateParams,
   UploadFileParams,
@@ -88,8 +90,10 @@ import {
   GroupApplicationItem,
   GroupItem,
   GroupMemberItem,
+  GetPinnedMessageListResult,
   IMConfig,
   MessageItem,
+  PinnedMsgInfo,
   PublicUserItem,
   RtcInviteResults,
   SearchedFriendsInfo,
@@ -299,6 +303,26 @@ class SDK extends Emitter {
       [operationID, JSON.stringify(params)]
     );
   };
+  getAdvancedHistoryMessageListApp = (
+    params: GetAdvancedHistoryMsgParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<AdvancedGetMessageResult>(
+      'getAdvancedHistoryMessageListApp',
+      window.getAdvancedHistoryMessageListApp,
+      [operationID, JSON.stringify(params)]
+    );
+  };
+  getAdvancedHistoryMessageListReverseApp = (
+    params: GetAdvancedHistoryMsgParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<AdvancedGetMessageResult>(
+      'getAdvancedHistoryMessageListReverseApp',
+      window.getAdvancedHistoryMessageListReverseApp,
+      [operationID, JSON.stringify(params)]
+    );
+  };
   getSpecifiedGroupsInfo = (params: string[], operationID = uuidv4()) => {
     return this._invoker<GroupItem[]>(
       'getSpecifiedGroupsInfo',
@@ -384,6 +408,17 @@ class SDK extends Emitter {
       'createUrlTextMessage',
       window.createUrlTextMessage,
       [operationID, text, urls],
+      data => {
+        // compitable with old version sdk
+        return data[0];
+      }
+    );
+  };
+  createStickerMessage = (content: string, operationID = uuidv4()) => {
+    return this._invoker<MessageItem>(
+      'createStickerMessage',
+      window.createStickerMessage,
+      [operationID, content],
       data => {
         // compitable with old version sdk
         return data[0];
@@ -559,6 +594,41 @@ class SDK extends Emitter {
       data.conversationID,
       data.clientMsgID,
     ]);
+  };
+
+  pinMsg = <T>(data: AccessMessageParams, operationID = uuidv4()) => {
+    return this._invoker<T>('pinMsg', window.pinMsg, [
+      operationID,
+      data.conversationID,
+      data.clientMsgID,
+    ]);
+  };
+
+  unpinMsg = <T>(data: AccessMessageParams, operationID = uuidv4()) => {
+    return this._invoker<T>('unpinMsg', window.unpinMsg, [
+      operationID,
+      data.conversationID,
+      data.clientMsgID,
+    ]);
+  };
+
+  getPinnedMsgs = (conversationID: string, operationID = uuidv4()) => {
+    return this._invoker<PinnedMsgInfo[]>(
+      'getPinnedMsgs',
+      window.getPinnedMsgs,
+      [operationID, conversationID]
+    );
+  };
+
+  getPinnedMessageList = (
+    params: GetPinnedMessageListParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<GetPinnedMessageListResult>(
+      'getPinnedMessageList',
+      window.getPinnedMessageList,
+      [operationID, JSON.stringify(params)]
+    );
   };
 
   setConversation = <T>(
@@ -967,6 +1037,22 @@ class SDK extends Emitter {
       'getConversationListSplit ',
       window.getConversationListSplit,
       [operationID, data.offset, data.count]
+    );
+  };
+  getConversationListSplitApp = (
+    data: SplitConversationAppParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<ConversationItem[]>(
+      'getConversationListSplitApp ',
+      window.getConversationListSplitApp,
+      [
+        operationID,
+        data.offset,
+        data.count,
+        data.applicationType,
+        data.chatCategory,
+      ]
     );
   };
   // searchConversation = (data: SplitConversationParams, operationID = uuidv4()) => {

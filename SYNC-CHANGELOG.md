@@ -1,0 +1,29 @@
+# Nhật ký đồng bộ Core → JS SDK
+
+## Sync 2026-07-29 — Core dev đến PR#42 (`902c93f1`)
+
+Nguồn audit: `plans/260729-sync-js-wasm-with-core-dev/plan.md` (audit thủ công PR#3–#42 của Core `dev`, baseline PR#2 `32c543ac`). Core `dev` HEAD tại thời điểm audit đó trùng khớp với HEAD lúc chạy sync này — không có PR mới nào phát sinh thêm.
+
+Đã port 5 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#23](https://github.com/droppii/openimsdk-core/pull/23) | feat/Func-createMergeMsg | Thêm field `MaxSeq`/`MinSeq` vào `temp_struct.LocalConversation` (wasm/indexdb) | `maxSeq`/`minSeq` trên `ConversationItem` (`src/types/entity.ts`) |
+| [#27](https://github.com/droppii/openimsdk-core/pull/27) | feat/new-func-get-conversation-list-app | Export mới `GetConversationListSplitApp` | `getConversationListSplitApp()`, type `SplitConversationAppParams` |
+| [#30](https://github.com/droppii/openimsdk-core/pull/30) | feat/Get-list-msg-app | Export mới `GetAdvancedHistoryMessageListApp`, `GetAdvancedHistoryMessageListReverseApp` | `getAdvancedHistoryMessageListApp()`, `getAdvancedHistoryMessageListReverseApp()` |
+| [#31](https://github.com/droppii/openimsdk-core/pull/31) | feat/pin-msg | Export mới `PinMsg`, `UnpinMsg`, `GetPinnedMsgs`, `GetPinnedMessageList`; event `OnRecvMessagePinned` | `pinMsg()`, `unpinMsg()`, `getPinnedMsgs()`, `getPinnedMessageList()`, `CbEvents.OnRecvMessagePinned`, type `MessagePinnedInfo`/`PinnedMsgInfo`/`GetPinnedMessageListParams`/`GetPinnedMessageListResult` |
+| [#39](https://github.com/droppii/openimsdk-core/pull/39) | feat/new-contentType-Sticker-Message | Content-type mới `StickerMessage = 162`, export `CreateStickerMessage` | `MessageType.StickerMessage = 162`, `createStickerMessage()`, type `StickerElem` |
+
+### Đã loại khỏi phạm vi
+
+- **PR#19** (`createButtonMessage`, feat/DROPPII-29011) — `plan.md` audit trước đó liệt kê là "cần port", nhưng đã xác nhận bằng cách đọc trực tiếp lịch sử Core: PR#19 **đã bị revert** trên `dev` (commit `1cd5f0e2`, nằm trong chính khoảng PR mà `plan.md` từng audit nhưng bị bỏ sót). Không còn `ButtonMessage`/`createButtonMessage` ở bất kỳ file Go nào tại Core `dev` HEAD hiện tại — không port.
+- **PR#3/8/9** (field `IsInternal`) — theo `plan.md`: thêm rồi revert 2 lần, net effect không đổi. `isInternal` đã có sẵn ở `MessageItem` từ trước, không cần hành động.
+- **PR#5** — chỉ sửa nội bộ schema-guard indexdb, không đổi signature JS.
+- **29 PR còn lại** (#6, #10-16, #18, #20-22, #24-26, #28-29, #32-38, #40-42) — không chạm `wasm/`, hoặc là các PR chuẩn bị/follow-up nội bộ cho #27/#30/#31 (đã kiểm tra riêng #29, #32 — không đụng `wasm/`).
+
+### Đồng bộ asset — PR#17 (`wasm_exec.js`) và `sql-wasm.wasm`
+
+- **`assets/wasm_exec.js`**: đã copy trực tiếp từ `droppii/openimsdk-core` (`wasm/cmd/static/wasm_exec.js`, Go 1.23 runtime) vào repo này. Trước đó file chỉ có phần đổi tên `go`→`gojs` và harness `_gotest` của PR#17, còn thiếu `O_DIRECTORY` và `globalThis.path.resolve` — giờ đã khớp 100% với Core (diff-verify bằng `diff`, không còn khác biệt).
+- **`assets/sql-wasm.wasm`**: đã kiểm tra checksum SHA-256 so với file `dist/sql-wasm.wasm` trong package `@jlongster/sql.js@1.6.7` (đúng version khai báo trong `package.json`) — khớp byte-for-byte, không cần cập nhật. File này không thuộc Core, là artifact của package `sql.js` độc lập.
+
+Version package: `3.8.2-1` → xem commit bump version riêng.

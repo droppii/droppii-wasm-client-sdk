@@ -194,6 +194,8 @@ export type ConversationItem = {
   draftText: string;
   draftTextTime: number;
   burnDuration: number;
+  maxSeq: number;
+  minSeq: number;
   msgDestructTime: number;
   isPinned: boolean;
   isNotInGroup: boolean;
@@ -229,6 +231,7 @@ export type MessageItem = {
   textElem?: TextElem;
   urlTextElem?: UrlTextElem;
   logTextElem?: LogTextElem;
+  stickerElem?: StickerElem;
   cardElem?: CardElem;
   pictureElem?: PictureElem;
   soundElem?: SoundElem;
@@ -253,6 +256,9 @@ export type UrlTextElem = {
   urls: string[];
 };
 export type LogTextElem = {
+  content: string;
+};
+export type StickerElem = {
   content: string;
 };
 export type CardElem = {
@@ -399,6 +405,25 @@ export type RevokedInfo = {
   ex: string;
 };
 
+export type MessagePinnedInfo = {
+  conversationID: string;
+  seq: number;
+  clientMsgID: string;
+  serverMsgID: string;
+  operatorUserID: string;
+  operatorNickname: string;
+  pinnedTime: number;
+  isPinned: boolean;
+};
+
+export type PinnedMsgInfo = {
+  seq: number;
+  pinnedByUserID: string;
+  pinnedTime: number;
+  clientMsgID: string;
+  serverMsgID: string;
+};
+
 export type ReceiptInfo = {
   userID: string;
   groupID: string;
@@ -430,6 +455,13 @@ export type AdvancedGetMessageResult = {
   errCode: number;
   errMsg: string;
   messageList: MessageItem[];
+};
+
+export type GetPinnedMessageListResult = {
+  messageList: MessageItem[];
+  totalCount: number;
+  remainingPinCount: number;
+  isEnd: boolean;
 };
 
 export type RtcInvite = {
