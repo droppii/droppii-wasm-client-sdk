@@ -222,6 +222,9 @@ export type MessageItem = {
   content: string;
   seq: number;
   isRead: boolean;
+  isPinned?: boolean;
+  pinnedByUserID?: string;
+  pinnedTime?: number;
   status: MessageStatus;
   isReact?: boolean;
   isExternalExtensions?: boolean;
