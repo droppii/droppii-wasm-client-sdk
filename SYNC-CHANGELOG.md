@@ -1,5 +1,17 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-07-30 — Sai type params của `getAdvancedHistoryMessageListApp`/`ReverseApp`
+
+Consumer app báo lỗi TypeScript khi cài `0.1.1`: field `lastMinSeq` bị bắt buộc nhưng không thuộc về request thực tế của 2 method này.
+
+**Nguyên nhân:** khi port PR#30 (`feat/Get-list-msg-app`), 2 method `getAdvancedHistoryMessageListApp`/`getAdvancedHistoryMessageListReverseApp` bị gán nhầm type `GetAdvancedHistoryMsgParams` — type này vốn thuộc về 2 method cũ hơn (`getAdvancedHistoryMessageList`/`getAdvancedHistoryMessageListReverse`, có từ trước khi skill này tồn tại) và có field `lastMinSeq`, `userID`, `groupID`.
+
+Đối chiếu lại Go source (`pkg/sdk_params_callback/conversation_msg_sdk_struct.go`, struct `GetAdvancedHistoryMessageListParams`) — struct này dùng chung cho **cả 4** method (App và non-App), và chỉ có 4 field: `conversationID`, `startClientMsgID`, `count`, `viewType`. Không có `lastMinSeq`/`userID`/`groupID` ở tầng Go nào cả — `lastMinSeq` là biến nội bộ dùng cho continuity-tracking (`message_check.go`), không phải field request.
+
+**Đã fix:** thêm type mới `GetAdvancedHistoryMsgAppParams` (`conversationID`, `startClientMsgID`, `count`, `viewType`) đúng theo Go struct, áp dụng cho 2 method App. 2 method non-App giữ nguyên `GetAdvancedHistoryMsgParams` cũ (không đổi, ngoài phạm vi fix — dù dư field so với Go struct, các field dư bị JSON unmarshal bỏ qua nên không lỗi ở runtime, chỉ khác ở compile-time type).
+
+Version package: `0.1.1` → `0.1.2` (patch — sửa type bug, không đổi runtime behavior).
+
 ## Re-audit 2026-07-29 — Fix field thiếu từ PR#20-22 (Core dev vẫn ở PR#42, `902c93f1`)
 
 Core `dev` HEAD không đổi so với lần sync trước (vẫn PR#42). Đây là audit lại toàn bộ 33 PR đã bị skip (#3–#42 trừ 5 PR đã port), không phải sync PR mới.
