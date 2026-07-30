@@ -10,6 +10,8 @@ Consumer app báo lỗi TypeScript khi cài `0.1.1`: field `lastMinSeq` bị b�
 
 **Đã fix:** thêm type mới `GetAdvancedHistoryMsgAppParams` (`conversationID`, `startClientMsgID`, `count`, `viewType`) đúng theo Go struct, áp dụng cho 2 method App. 2 method non-App giữ nguyên `GetAdvancedHistoryMsgParams` cũ (không đổi, ngoài phạm vi fix — dù dư field so với Go struct, các field dư bị JSON unmarshal bỏ qua nên không lỗi ở runtime, chỉ khác ở compile-time type).
 
+**Fix bổ sung (cùng version):** `viewType` ban đầu type là `number` trần — nhưng Core có định nghĩa hằng số tên rõ ràng (`pkg/cache/conversation_seq_cache.go`: `ViewHistory = 0`, `ViewSearch = 1`), không phải số tuỳ ý caller chọn. Đã thêm enum `ViewType` (export public qua `src/types/enum.ts`) và đổi field `viewType` trong `GetAdvancedHistoryMsgAppParams` sang dùng enum này thay vì `number`.
+
 Version package: `0.1.1` → `0.1.2` (patch — sửa type bug, không đổi runtime behavior).
 
 ## Re-audit 2026-07-29 — Fix field thiếu từ PR#20-22 (Core dev vẫn ở PR#42, `902c93f1`)
