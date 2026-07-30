@@ -19,6 +19,7 @@ import {
   LogLevel,
   GroupMessageReaderFilter,
   GroupAtType,
+  ViewType,
 } from './enum';
 
 export type WasmPathConfig = {
@@ -55,7 +56,7 @@ export type GetAdvancedHistoryMsgAppParams = {
   conversationID: string;
   startClientMsgID: string;
   count: number;
-  viewType: number;
+  viewType: ViewType;
 };
 export type GetHistoryMsgParams = {
   userID: string;
