@@ -45,14 +45,6 @@ export type GetOneConversationParams = {
   sessionType: number;
 };
 export type GetAdvancedHistoryMsgParams = {
-  userID?: string;
-  groupID?: string;
-  lastMinSeq: number;
-  count: number;
-  startClientMsgID: string;
-  conversationID: string;
-};
-export type GetAdvancedHistoryMsgAppParams = {
   conversationID: string;
   startClientMsgID: string;
   count: number;
