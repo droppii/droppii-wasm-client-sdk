@@ -59,3 +59,53 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public
+
+  bump-chat-sdk:
+    needs: [check-version, publish]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout droppii/chat
+        uses: actions/checkout@v4
+        with:
+          repository: droppii/chat
+          token: ${{ secrets.CHAT_REPO_PAT }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump @droppii-org/wasm-client-sdk in packages/chat-sdk
+        id: bump
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          BRANCH="bump-wasm-client-sdk-$VERSION"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+          npm pkg set "dependencies.@droppii-org/wasm-client-sdk=$VERSION" \
+            --prefix packages/chat-sdk
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add packages/chat-sdk/package.json
+          git commit -m "chore(chat-sdk): bump @droppii-org/wasm-client-sdk to $VERSION"
+          git push -u origin "$BRANCH" --force
+
+      - name: Open PR to droppii/chat
+        env:
+          GH_TOKEN: ${{ secrets.CHAT_REPO_PAT }}
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          BRANCH="${{ steps.bump.outputs.branch }}"
+
+          EXISTING=$(gh pr list --repo droppii/chat --head "$BRANCH" --json number --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            echo "PR #$EXISTING already open for $BRANCH, skipping create"
+            exit 0
+          fi
+
+          BODY="Tự động tạo sau khi \`@droppii-org/wasm-client-sdk@$VERSION\` publish thành công lên npm (droppii/droppii-wasm-client-sdk).\n\nCần review thủ công: chạy \`pnpm install\`, \`type-check\`, và build trước khi merge — workflow này chỉ bump version, không tự chạy verify ở phía \`chat\`."
+
+          gh pr create --repo droppii/chat --base main --head "$BRANCH" \
+            --title "chore(chat-sdk): bump @droppii-org/wasm-client-sdk to $VERSION" \
+            --body "$(printf '%b' "$BODY")"
