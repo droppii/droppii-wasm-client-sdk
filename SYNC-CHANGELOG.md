@@ -1,5 +1,17 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-07-30 (2) — Gộp lại `GetAdvancedHistoryMsgParams` cho cả 4 method
+
+Fix `0.1.2` (bên dưới) chỉ sửa 2 method App bằng cách tách type riêng `GetAdvancedHistoryMsgAppParams`, nhưng 2 method non-App (`getAdvancedHistoryMessageList`/`getAdvancedHistoryMessageListReverse`) vẫn giữ `GetAdvancedHistoryMsgParams` cũ có `lastMinSeq`/`userID`/`groupID`.
+
+Xác nhận lại: cả 4 wasm export (`GetAdvancedHistoryMessageList`, `GetAdvancedHistoryMessageListReverse`, `GetAdvancedHistoryMessageListApp`, `GetAdvancedHistoryMessageListReverseApp`) đều nhận **cùng 1** struct Go (`pkg/sdk_params_callback/conversation_msg_sdk_struct.go`, `GetAdvancedHistoryMessageListParams` — chỉ `conversationID`, `startClientMsgID`, `count`, `viewType`). Vậy `lastMinSeq`/`userID`/`groupID` chưa từng đúng cho bất kỳ method nào trong 4 method này, kể cả 2 method non-App có từ trước khi skill sync này tồn tại.
+
+**Đã fix:** gộp `GetAdvancedHistoryMsgAppParams` vào lại `GetAdvancedHistoryMsgParams` (xoá field thừa, giữ đúng theo Go struct), dùng chung cho cả 4 method thay vì tách 2 type trùng lặp.
+
+**Lưu ý cho consumer:** nếu code cũ có truyền `lastMinSeq`/`userID`/`groupID` vào bất kỳ method nào trong 4 method trên, cần bỏ các field đó (compile-time only — Go đã âm thầm bỏ qua field thừa từ trước giờ nên hành vi runtime không đổi).
+
+Version package: `0.1.2` → `0.1.3` (patch).
+
 ## Fix 2026-07-30 — Sai type params của `getAdvancedHistoryMessageListApp`/`ReverseApp`
 
 Consumer app báo lỗi TypeScript khi cài `0.1.1`: field `lastMinSeq` bị bắt buộc nhưng không thuộc về request thực tế của 2 method này.
