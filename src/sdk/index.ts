@@ -20,7 +20,6 @@ import {
   FileMsgParamsByURL,
   FindMessageParams,
   GetAdvancedHistoryMsgParams,
-  GetAdvancedHistoryMsgAppParams,
   GetGroupMemberByTimeParams,
   GetGroupMemberParams,
   GetGroupMessageReaderParams,
@@ -305,7 +304,7 @@ class SDK extends Emitter {
     );
   };
   getAdvancedHistoryMessageListApp = (
-    params: GetAdvancedHistoryMsgAppParams,
+    params: GetAdvancedHistoryMsgParams,
     operationID = uuidv4()
   ) => {
     return this._invoker<AdvancedGetMessageResult>(
@@ -315,7 +314,7 @@ class SDK extends Emitter {
     );
   };
   getAdvancedHistoryMessageListReverseApp = (
-    params: GetAdvancedHistoryMsgAppParams,
+    params: GetAdvancedHistoryMsgParams,
     operationID = uuidv4()
   ) => {
     return this._invoker<AdvancedGetMessageResult>(
