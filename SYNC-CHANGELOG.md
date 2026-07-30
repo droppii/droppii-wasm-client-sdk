@@ -1,5 +1,11 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-07-30 (3) — Publish fix `MessageItem` (bổ sung `isPinned`/`pinnedByUserID`/`pinnedTime`)
+
+PR #6 (thêm 3 field pin vào `MessageItem`, xem mục "Fix 2026-07-30 (2)" bên dưới — mục lộn giữa PR#5/PR#6, xem git log để đối chiếu chính xác) merge **sau** khi workflow publish `0.1.3` đã chạy xong (`0.1.3` publish tại commit `1bf8144`, PR#6 merge tại `3cee6c6`) — nên `0.1.3` trên npm chưa có field `pinnedTime`, dù đã merge vào `main`.
+
+Version package: `0.1.3` → `0.1.4` (patch — chỉ để trigger publish, không có thay đổi code mới ngoài field đã merge ở PR#6).
+
 ## Fix 2026-07-30 (2) — Gộp lại `GetAdvancedHistoryMsgParams` cho cả 4 method
 
 Fix `0.1.2` (bên dưới) chỉ sửa 2 method App bằng cách tách type riêng `GetAdvancedHistoryMsgAppParams`, nhưng 2 method non-App (`getAdvancedHistoryMessageList`/`getAdvancedHistoryMessageListReverse`) vẫn giữ `GetAdvancedHistoryMsgParams` cũ có `lastMinSeq`/`userID`/`groupID`.
