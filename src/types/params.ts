@@ -51,6 +51,12 @@ export type GetAdvancedHistoryMsgParams = {
   startClientMsgID: string;
   conversationID: string;
 };
+export type GetAdvancedHistoryMsgAppParams = {
+  conversationID: string;
+  startClientMsgID: string;
+  count: number;
+  viewType: number;
+};
 export type GetHistoryMsgParams = {
   userID: string;
   groupID: string;
