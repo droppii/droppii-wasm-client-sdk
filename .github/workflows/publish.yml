@@ -70,9 +70,11 @@ jobs:
           repository: droppii/chat
           token: ${{ secrets.CHAT_REPO_PAT }}
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Bump @droppii-org/wasm-client-sdk in packages/chat-sdk
         id: bump
@@ -84,10 +86,12 @@ jobs:
           npm pkg set "dependencies.@droppii-org/wasm-client-sdk=$VERSION" \
             --prefix packages/chat-sdk
 
+          pnpm install --no-frozen-lockfile
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add packages/chat-sdk/package.json
+          git add packages/chat-sdk/package.json pnpm-lock.yaml
           git commit -m "chore(chat-sdk): bump @droppii-org/wasm-client-sdk to $VERSION"
           git push -u origin "$BRANCH" --force
 
@@ -104,7 +108,7 @@ jobs:
             exit 0
           fi
 
-          BODY="Tự động tạo sau khi \`@droppii-org/wasm-client-sdk@$VERSION\` publish thành công lên npm (droppii/droppii-wasm-client-sdk).\n\nCần review thủ công: chạy \`pnpm install\`, \`type-check\`, và build trước khi merge — workflow này chỉ bump version, không tự chạy verify ở phía \`chat\`."
+          BODY="Tự động tạo sau khi \`@droppii-org/wasm-client-sdk@$VERSION\` publish thành công lên npm (droppii/droppii-wasm-client-sdk).\n\npnpm-lock.yaml đã được cập nhật tự động. Cần review thủ công: chạy \`type-check\` và build trước khi merge — workflow này chưa tự chạy verify ở phía \`chat\`."
 
           gh pr create --repo droppii/chat --base main --head "$BRANCH" \
             --title "chore(chat-sdk): bump @droppii-org/wasm-client-sdk to $VERSION" \
