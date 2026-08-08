@@ -6,6 +6,7 @@ import {
   Platform,
   MessageStatus,
   GroupStatus,
+  GroupVisibility,
   GroupVerificationType,
   AllowType,
   GroupJoinSource,
@@ -165,6 +166,7 @@ export type GroupItem = {
   applyMemberFriend: AllowType;
   lookMemberInfo: AllowType;
   displayIsRead: boolean;
+  visibility?: GroupVisibility;
 };
 export type GroupMemberItem = {
   groupID: string;
