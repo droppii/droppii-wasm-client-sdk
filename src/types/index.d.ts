@@ -426,7 +426,7 @@ declare global {
       userID: string
     ) => Promise<string>;
     getLoginUserID: (operationID: string) => Promise<string>;
-    getSelfUserInfo: (operationID: string) => Promise<string>;
+    getSelfUserInfo: (operationID: string, groupID: string) => Promise<string>;
     getUsersInfo: (
       operationID: string,
       userIDList: string[]
