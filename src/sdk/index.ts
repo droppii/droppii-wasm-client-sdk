@@ -710,7 +710,7 @@ class SDK extends Emitter {
     ]);
   };
 
-  getSelfUserInfo = (groupID = '', operationID = uuidv4()) => {
+  getSelfUserInfo = (operationID = uuidv4(), groupID = '') => {
     return this._invoker<SelfUserInfo>(
       'getSelfUserInfo',
       window.getSelfUserInfo,
