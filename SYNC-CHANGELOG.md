@@ -1,5 +1,22 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-08-08 — Core dev đến PR#45 (`bd1e1dfa`)
+
+Core `dev` tiến từ PR#42 (`902c93f1`) lên PR#45 (`bd1e1dfa`) — 2 PR mới, cả 2 đều cần port.
+
+Đã port 2 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#44](https://github.com/droppii/openimsdk-core/pull/44) | feat/DROPPII-29975(Livechat-CRM-Group-Create-group) | Thêm field `Visibility int32` vào `LocalGroup` (`pkg/db/model_struct/data_model_struct.go`, dùng trực tiếp trong `wasm/indexdb/group_model.go`); hằng số `GroupVisibilityPrivate=0`/`GroupVisibilityPublic=1` | Enum `GroupVisibility`, field `visibility?: GroupVisibility` trên `GroupItem` |
+| [#45](https://github.com/droppii/openimsdk-core/pull/45) | feat/create-group-and-permission | (a) Thêm field `Permissions StringArray` vào `LocalGroupMember` và `LocalUser` (dùng trực tiếp trong `wasm/indexdb/`); (b) đổi signature `open_im_sdk.GetSelfUserInfo(callback, operationID)` → `(callback, operationID, groupID)` — hàm này được `wasm_wrapper.GetSelfUserInfo` gọi trực tiếp qua reflection (`wasm/event_listener/caller.go`), khi `groupID` không rỗng Core trả kèm quyền (`permissions`) của user trong group đó | Field `permissions?: string[]` trên `GroupMemberItem`/`SelfUserInfo`; **breaking**: `getSelfUserInfo()` đổi từ `(operationID?)` → `(groupID?, operationID?)` — theo quyết định người dùng, đặt `groupID` trước để khớp thứ tự tham số Go, callers đang gọi `getSelfUserInfo(myOpId)` cần sửa lại thành `getSelfUserInfo('', myOpId)` |
+
+### Ghi chú kỹ thuật quan trọng — cơ chế đệm tham số của wasm caller
+
+Không phải mọi thay đổi Core cần export `js.Global().Set(...)` mới mới đáng port. `PR#44`/`#45` không thêm export nào — chỉ thêm field vào struct Go dùng chung qua nhiều wasm export sẵn có (`LocalGroup`, `LocalGroupMember`, `LocalUser`), và đổi signature 1 hàm hiện có. Xác nhận qua `wasm/event_listener/caller.go` (dòng ~91-93): reflection tự đệm thêm 1 `js.Value{}` rỗng nếu số tham số Go nhiều hơn số args JS truyền đúng 1 — nên các JS call cũ (thiếu `groupID`) không crash runtime (Go nhận `groupID=""`), nhưng vẫn cần port để expose khả năng truyền `groupID` thật.
+
+Version package: `0.1.4` → `0.2.0` (minor — breaking change ở `getSelfUserInfo()`).
+
 ## Fix 2026-07-30 (3) — Publish fix `MessageItem` (bổ sung `isPinned`/`pinnedByUserID`/`pinnedTime`)
 
 PR #6 (thêm 3 field pin vào `MessageItem`, xem mục "Fix 2026-07-30 (2)" bên dưới — mục lộn giữa PR#5/PR#6, xem git log để đối chiếu chính xác) merge **sau** khi workflow publish `0.1.3` đã chạy xong (`0.1.3` publish tại commit `1bf8144`, PR#6 merge tại `3cee6c6`) — nên `0.1.3` trên npm chưa có field `pinnedTime`, dù đã merge vào `main`.
