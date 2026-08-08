@@ -6,6 +6,7 @@ import {
   Platform,
   MessageStatus,
   GroupStatus,
+  GroupVisibility,
   GroupVerificationType,
   AllowType,
   GroupJoinSource,
@@ -112,6 +113,7 @@ export type SelfUserInfo = {
   nickname: string;
   userID: string;
   globalRecvMsgOpt: MessageReceiveOptType;
+  permissions?: string[];
 };
 export type PartialUserInfo = {
   userID: string;
@@ -165,6 +167,7 @@ export type GroupItem = {
   applyMemberFriend: AllowType;
   lookMemberInfo: AllowType;
   displayIsRead: boolean;
+  visibility?: GroupVisibility;
 };
 export type GroupMemberItem = {
   groupID: string;
@@ -178,6 +181,7 @@ export type GroupMemberItem = {
   inviterUserID: string;
   operatorUserID: string;
   ex: string;
+  permissions?: string[];
 };
 export type ConversationItem = {
   conversationID: string;

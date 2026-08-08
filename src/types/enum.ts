@@ -103,6 +103,10 @@ export enum GroupStatus {
   Dismissed = 2,
   Muted = 3,
 }
+export enum GroupVisibility {
+  Private = 0,
+  Public = 1,
+}
 export enum GroupAtType {
   AtNormal = 0,
   AtMe = 1,

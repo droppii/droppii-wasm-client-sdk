@@ -1,9 +1,9 @@
 {
-  "lastSyncedCoreSha": "902c93f156393bf56b081eebe059b53d158dc73c",
-  "lastSyncedCorePr": 42,
-  "lastSyncedAt": "2026-07-29",
-  "jsCommit": "bc75316",
-  "portedPrs": [23, 27, 30, 31, 39],
+  "lastSyncedCoreSha": "bd1e1dfa22309ccd5f5d94898b64e445a14007e1",
+  "lastSyncedCorePr": 45,
+  "lastSyncedAt": "2026-08-08",
+  "jsCommit": "8a3f807",
+  "portedPrs": [23, 27, 30, 31, 39, 44, 45],
   "skippedPrs": [3, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 28, 29, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42],
-  "notes": "PR#19 (createButtonMessage) was in a prior audit's port list but confirmed reverted on Core dev (commit 1cd5f0e2) -- correctly skipped, not ported. PR#17 (wasm_exec.js gojs rename) verified partially applied in assets/wasm_exec.js; not modified per scope (assets are consumer-overridden). 260729 re-audit: full re-diff of all skipped PR#3-42 against wasm/ confirmed all correctly skipped except PR#20-22 (feat/New-func-GetConversationListSplitApp) -- Core-SDK-layer only (internal/, open_im_sdk/, no wasm/ export at that point) at #20-22 time, so 'touches wasm/' check correctly passed over them; the wasm export itself landed in #27 (already ported) but the new PeerType field on LocalConversation (introduced in #20, pkg/db/model_struct/data_model_struct.go) was missed during the #27 port. Fixed: added optional peerType?: string to ConversationItem in src/types/entity.ts."
+  "notes": "PR#19 (createButtonMessage) was in a prior audit's port list but confirmed reverted on Core dev (commit 1cd5f0e2) -- correctly skipped, not ported. PR#17 (wasm_exec.js gojs rename) verified partially applied in assets/wasm_exec.js; not modified per scope (assets are consumer-overridden). 260729 re-audit: full re-diff of all skipped PR#3-42 against wasm/ confirmed all correctly skipped except PR#20-22 (feat/New-func-GetConversationListSplitApp) -- Core-SDK-layer only (internal/, open_im_sdk/, no wasm/ export at that point) at #20-22 time, so 'touches wasm/' check correctly passed over them; the wasm export itself landed in #27 (already ported) but the new PeerType field on LocalConversation (introduced in #20, pkg/db/model_struct/data_model_struct.go) was missed during the #27 port. Fixed: added optional peerType?: string to ConversationItem in src/types/entity.ts. 260808 sync: PR#44/#45 added no new js.Global().Set export -- both only add fields to structs (LocalGroup.Visibility, LocalGroupMember.Permissions, LocalUser.Permissions) already serialized through existing wasm/indexdb/ exports, plus PR#45 changed open_im_sdk.GetSelfUserInfo's Go signature (added groupID param) which wasm_wrapper.GetSelfUserInfo invokes via reflection -- confirmed via wasm/event_listener/caller.go's arg-padding logic that old JS calls don't crash (Go receives groupID=''), but the capability still needed porting. getSelfUserInfo() JS signature is now (groupID?, operationID?) -- breaking, groupID placed first per user decision to mirror Go param order."
 }
