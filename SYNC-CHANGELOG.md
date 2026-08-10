@@ -1,5 +1,15 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-08-10 — Bổ sung cột `visibility` vào SQL schema `local_groups` (thiếu ở sync PR#44)
+
+Sync `a104f64` (mục "Sync 2026-08-08" bên dưới) port field `visibility` cho PR#44 nhưng chỉ cập nhật type TypeScript (`GroupVisibility` enum, `GroupItem.visibility`) — không cập nhật SQL schema thật của `local_groups` trong `src/sqls/localGroups.ts` (thiếu cột trong `CREATE TABLE`) và `src/api/database/alter.ts` (thiếu `ALTER TABLE` migration cho DB đã tồn tại từ trước). Hậu quả: mọi `insertGroup`/`updateGroup` chứa field `visibility` (đến từ Core WASM qua `wasm/indexdb/group_model.go`) throw lỗi runtime `table local_groups has no column named visibility` trên cả DB mới và DB cũ.
+
+**Đã fix:**
+- `src/sqls/localGroups.ts`: thêm cột `'visibility' INTEGER` vào `CREATE TABLE IF NOT EXISTS local_groups`.
+- `src/api/database/alter.ts`: thêm `alter383()` — `ALTER TABLE local_groups ADD COLUMN visibility INTEGER;` (đặt tên theo version Core hiện tại `3.8.3`, theo convention `alter351`/`alter380` đã có), gọi trong `alterTable()` cho user có DB cũ từ trước sync PR#44.
+
+Version package: `0.2.0` → `0.2.1` (patch — fix schema, không đổi API/type).
+
 ## Sync 2026-08-08 — Core dev đến PR#45 (`bd1e1dfa`)
 
 Core `dev` tiến từ PR#42 (`902c93f1`) lên PR#45 (`bd1e1dfa`) — 2 PR mới, cả 2 đều cần port.
