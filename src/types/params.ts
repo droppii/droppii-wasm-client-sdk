@@ -21,6 +21,7 @@ import {
   GroupAtType,
   ViewType,
   PublicGroupJoinStatus,
+  GroupPermission,
 } from './enum';
 
 export type WasmPathConfig = {
@@ -394,6 +395,7 @@ export type UpdateMemberInfoParams = {
   faceURL?: string;
   roleLevel?: GroupMemberRole;
   ex?: string;
+  permissions?: GroupPermission[];
 };
 export type FindMessageParams = {
   conversationID: string;

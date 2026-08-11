@@ -1,5 +1,26 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-08-11 (3) — Consumer báo crash `insertGroupMember` + thiếu `permissions` khi set member
+
+Consumer báo lỗi khi cài package mới:
+```
+Error: UNIQUE constraint failed: local_group_members.group_id, local_group_members.user_id
+```
+
+**Nguyên nhân:** `insertGroupMember`/`batchInsertGroupMember` (`src/sqls/localGroupMembers.ts`) dùng `INSERT` thuần, không xử lý xung đột. Đối chiếu Core (`pkg/syncer/syncer.go`, hàm `Sync()`): Core tự đọc `localData` trước, phân loại insert/update dựa trên record đã có hay chưa — về lý thuyết chỉ gọi `insert()` cho record thật sự mới. Nhưng nếu bước đọc local data (`getGroupMemberListByGroupID`) gặp lỗi runtime, hàm trả `formatResponse(undefined, ...)` → serialize thành `'{}'` (object rỗng) thay vì `'[]'` — Core có thể hiểu nhầm "chưa có member nào local" và insert lại toàn bộ, kể cả member đã tồn tại → crash.
+
+**Đã fix (2 lớp phòng thủ):**
+1. `insertGroupMember`/`batchInsertGroupMember` đổi sang `INSERT OR REPLACE` (string-replace trên SQL do `squel` không hỗ trợ native SQLite REPLACE)
+2. `getGroupMemberListByGroupID`: nhánh lỗi trả `formatResponse([], ...)` thay vì `formatResponse(undefined, ...)` — đảm bảo Core luôn nhận đúng shape mảng rỗng, không phải object mơ hồ
+
+**Phạm vi:** chỉ sửa `insertGroupMember`/`getGroupMemberListByGroupID` — còn 16 hàm `insert*()` khác trong `src/sqls/` dùng cùng pattern `INSERT` thuần nhưng chưa có báo lỗi cụ thể nào, giữ nguyên theo quyết định người dùng.
+
+### Fix bổ sung phát hiện cùng lúc — thiếu `permissions` khi set group member
+
+Khi rà `setGroupMemberInfo`, phát hiện Go struct `SetGroupMemberInfo` (`protocol/group/group.pb.go`, field 7) có `Permissions []string` nhưng `UpdateMemberInfoParams` JS chưa từng expose field này — nghĩa là port PR#46 (grant-admin-role, tuần trước) chỉ hoàn thành phần đọc (`GroupMemberItem.permissions`), bỏ sót phần ghi. Đã thêm `permissions?: GroupPermission[]` vào `UpdateMemberInfoParams`.
+
+Version package: `0.3.1` → `0.3.2` (patch).
+
 ## Sync 2026-08-11 (2) — Core dev đến PR#49 (`389a8940`)
 
 Core `dev` tiến từ PR#47 (`ce755413`) lên PR#49 (`389a8940`) — 2 PR mới, cùng branch `feat/DROPPII-30296(search-public-group)` (follow-up cho `searchPublicGroups` vừa port ở sync trước, chưa kịp publish).
