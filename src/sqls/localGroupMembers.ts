@@ -19,8 +19,9 @@ export function localGroupMembers(db: Database): QueryExecResult[] {
         'operator_user_id' varchar(64),
         'ex' varchar(1024),
         'attached_info' varchar(1024),
+        'permissions' TEXT,
         PRIMARY KEY ('group_id', 'user_id')
-    ) 
+    )
       `
   );
 }

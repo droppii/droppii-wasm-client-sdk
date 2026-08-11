@@ -4,6 +4,7 @@ export function alterTable(db: Database) {
   alter351(db);
   alter380(db);
   alter383(db);
+  alter021(db);
 }
 
 function alter351(db: Database) {
@@ -35,6 +36,27 @@ function alter383(db: Database) {
     db.exec(
       `
         ALTER TABLE local_groups ADD COLUMN visibility INTEGER;
+        `
+    );
+  } catch (error) {
+    // alter table error
+  }
+}
+
+function alter021(db: Database) {
+  try {
+    db.exec(
+      `
+        ALTER TABLE local_group_members ADD COLUMN permissions TEXT;
+        `
+    );
+  } catch (error) {
+    // alter table error
+  }
+  try {
+    db.exec(
+      `
+        ALTER TABLE local_users ADD COLUMN permissions TEXT;
         `
     );
   } catch (error) {

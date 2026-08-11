@@ -83,3 +83,42 @@ export function convertObjectField(
 
   return ret;
 }
+
+// squel.setFields() only accepts string/number/boolean/null -- array-typed
+// columns (e.g. permissions) must be JSON-stringified before insert/update.
+export function serializeArrayFields(
+  obj: Record<string, unknown>,
+  arrayKeys: string[]
+) {
+  const ret: Record<string, unknown> = { ...obj };
+
+  arrayKeys.forEach(k => {
+    if (Array.isArray(ret[k])) {
+      ret[k] = JSON.stringify(ret[k]);
+    }
+  });
+
+  return ret;
+}
+
+// Reverses serializeArrayFields when reading rows back from SQLite.
+export function deserializeArrayFields(
+  obj: Record<string, unknown>,
+  arrayKeys: string[]
+) {
+  const ret: Record<string, unknown> = { ...obj };
+
+  arrayKeys.forEach(k => {
+    if (typeof ret[k] === 'string' && ret[k]) {
+      try {
+        ret[k] = JSON.parse(ret[k] as string);
+      } catch {
+        ret[k] = [];
+      }
+    } else if (ret[k] == null) {
+      ret[k] = [];
+    }
+  });
+
+  return ret;
+}

@@ -28,9 +28,13 @@ import {
   converSqlExecResult,
   convertObjectField,
   convertToSnakeCaseObject,
+  deserializeArrayFields,
   formatResponse,
+  serializeArrayFields,
 } from '@/utils';
 import { getInstance } from './instance';
+
+const GROUP_MEMBER_ARRAY_FIELDS = ['permissions'];
 
 export async function getGroupMemberInfoByGroupIDUserID(
   groupID: string,
@@ -45,10 +49,12 @@ export async function getGroupMemberInfoByGroupIDUserID(
       userID
     );
 
+    const result = converSqlExecResult(execResult[0], 'CamelCase', [], {
+      user_group_face_url: 'faceURL',
+    })[0];
+
     return formatResponse(
-      converSqlExecResult(execResult[0], 'CamelCase', [], {
-        user_group_face_url: 'faceURL',
-      })[0]
+      result && deserializeArrayFields(result, GROUP_MEMBER_ARRAY_FIELDS)
     );
   } catch (e) {
     console.error(e);
@@ -70,7 +76,7 @@ export async function getAllGroupMemberList(): Promise<string> {
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -135,7 +141,7 @@ export async function getGroupSomeMemberInfo(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -181,7 +187,7 @@ export async function getGroupMemberListByGroupID(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -216,7 +222,7 @@ export async function getGroupMemberListSplit(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -247,7 +253,7 @@ export async function getGroupMemberListByUserIDs(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -271,7 +277,7 @@ export async function getGroupMemberOwnerAndAdmin(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -289,11 +295,12 @@ export async function getGroupMemberOwner(groupID: string): Promise<string> {
     const db = await getInstance();
 
     const execResult = databaseGetGroupMemberOwner(db, groupID);
+    const result = converSqlExecResult(execResult[0], 'CamelCase', [], {
+      user_group_face_url: 'faceURL',
+    })[0];
 
     return formatResponse(
-      converSqlExecResult(execResult[0], 'CamelCase', [], {
-        user_group_face_url: 'faceURL',
-      })[0]
+      result && deserializeArrayFields(result, GROUP_MEMBER_ARRAY_FIELDS)
     );
   } catch (e) {
     console.error(e);
@@ -330,7 +337,7 @@ export async function getGroupMemberListSplitByJoinTimeFilter(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -354,7 +361,7 @@ export async function getGroupOwnerAndAdminByGroupID(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);
@@ -394,9 +401,12 @@ export async function insertGroupMember(
   try {
     const db = await getInstance();
     const localGroup = convertToSnakeCaseObject(
-      convertObjectField(JSON.parse(localGroupMemberStr), {
-        faceURL: 'user_group_face_url',
-      })
+      serializeArrayFields(
+        convertObjectField(JSON.parse(localGroupMemberStr), {
+          faceURL: 'user_group_face_url',
+        }),
+        GROUP_MEMBER_ARRAY_FIELDS
+      )
     ) as LocalGroupMember;
 
     databaseInsertGroupMember(db, localGroup);
@@ -422,9 +432,12 @@ export async function batchInsertGroupMember(
       (JSON.parse(localGroupMemberStr) || []) as LocalGroupMember[]
     ).map((v: Record<string, unknown>) =>
       convertToSnakeCaseObject(
-        convertObjectField(v, {
-          faceURL: 'user_group_face_url',
-        })
+        serializeArrayFields(
+          convertObjectField(v, {
+            faceURL: 'user_group_face_url',
+          }),
+          GROUP_MEMBER_ARRAY_FIELDS
+        )
       )
     );
 
@@ -487,9 +500,12 @@ export async function updateGroupMember(
   try {
     const db = await getInstance();
     const localGroupMember = convertToSnakeCaseObject(
-      convertObjectField(JSON.parse(localGroupMemberStr), {
-        faceURL: 'user_group_face_url',
-      })
+      serializeArrayFields(
+        convertObjectField(JSON.parse(localGroupMemberStr), {
+          faceURL: 'user_group_face_url',
+        }),
+        GROUP_MEMBER_ARRAY_FIELDS
+      )
     ) as LocalGroupMember;
 
     databaseUpdateGroupMember(db, localGroupMember);
@@ -514,9 +530,12 @@ export async function updateGroupMemberField(
   try {
     const db = await getInstance();
     const localGroupMember = convertToSnakeCaseObject(
-      convertObjectField(JSON.parse(localGroupMemberStr), {
-        faceURL: 'user_group_face_url',
-      })
+      serializeArrayFields(
+        convertObjectField(JSON.parse(localGroupMemberStr), {
+          faceURL: 'user_group_face_url',
+        }),
+        GROUP_MEMBER_ARRAY_FIELDS
+      )
     ) as LocalGroupMember;
 
     databaseUpdateGroupMemberField(db, groupID, userID, localGroupMember);
@@ -557,7 +576,7 @@ export async function searchGroupMembers(
     return formatResponse(
       converSqlExecResult(execResult[0], 'CamelCase', [], {
         user_group_face_url: 'faceURL',
-      })
+      }).map(item => deserializeArrayFields(item, GROUP_MEMBER_ARRAY_FIELDS))
     );
   } catch (e) {
     console.error(e);

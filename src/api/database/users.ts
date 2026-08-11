@@ -10,8 +10,12 @@ import {
   converSqlExecResult,
   convertToSnakeCaseObject,
   convertObjectField,
+  deserializeArrayFields,
+  serializeArrayFields,
 } from '@/utils';
 import { getInstance } from './instance';
+
+const USER_ARRAY_FIELDS = ['permissions'];
 
 export async function getLoginUser(userID: string): Promise<string> {
   try {
@@ -27,10 +31,12 @@ export async function getLoginUser(userID: string): Promise<string> {
       );
     }
 
+    const result = converSqlExecResult(execResult[0], 'CamelCase', [], {
+      name: 'nickname',
+    })[0];
+
     return formatResponse(
-      converSqlExecResult(execResult[0], 'CamelCase', [], {
-        name: 'nickname',
-      })[0]
+      result && deserializeArrayFields(result, USER_ARRAY_FIELDS)
     );
   } catch (e) {
     console.error(e);
@@ -47,7 +53,10 @@ export async function insertLoginUser(userStr: string): Promise<string> {
   try {
     const db = await getInstance();
     const user = convertToSnakeCaseObject(
-      convertObjectField(JSON.parse(userStr), { nickname: 'name' })
+      serializeArrayFields(
+        convertObjectField(JSON.parse(userStr), { nickname: 'name' }),
+        USER_ARRAY_FIELDS
+      )
     ) as ClientUser;
 
     const execResult = databaseInsertLoginUser(db, user);
@@ -68,7 +77,10 @@ export async function updateLoginUser(userStr: string): Promise<string> {
   try {
     const db = await getInstance();
     const user = convertToSnakeCaseObject(
-      convertObjectField(JSON.parse(userStr), { nickname: 'name' })
+      serializeArrayFields(
+        convertObjectField(JSON.parse(userStr), { nickname: 'name' }),
+        USER_ARRAY_FIELDS
+      )
     ) as ClientUser;
 
     const execResult = databaseUpdateLoginUser(db, user);
