@@ -227,6 +227,12 @@ export type ConversationItem = {
   attachedInfo: string;
   ex?: string;
   peerType?: string;
+  members?: ConversationGroupMember[];
+};
+export type ConversationGroupMember = {
+  userID: string;
+  nickname: string;
+  faceURL: string;
 };
 export type MessageItem = {
   clientMsgID: string;
