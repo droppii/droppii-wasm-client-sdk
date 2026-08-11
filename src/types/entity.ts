@@ -7,6 +7,7 @@ import {
   MessageStatus,
   GroupStatus,
   GroupVisibility,
+  GroupPermission,
   GroupVerificationType,
   AllowType,
   GroupJoinSource,
@@ -113,7 +114,7 @@ export type SelfUserInfo = {
   nickname: string;
   userID: string;
   globalRecvMsgOpt: MessageReceiveOptType;
-  permissions?: string[];
+  permissions?: GroupPermission[];
 };
 export type PartialUserInfo = {
   userID: string;
@@ -181,7 +182,25 @@ export type GroupMemberItem = {
   inviterUserID: string;
   operatorUserID: string;
   ex: string;
-  permissions?: string[];
+  permissions?: GroupPermission[];
+};
+export type SearchPublicGroupMemberInfo = {
+  userID: string;
+  nickname: string;
+  faceURL: string;
+};
+export type SearchPublicGroupInfo = {
+  groupID: string;
+  groupName: string;
+  faceURL: string;
+  introduction: string;
+  memberCount: number;
+  isJoined: boolean;
+  members: SearchPublicGroupMemberInfo[];
+};
+export type SearchPublicGroupsResult = {
+  total: number;
+  groups: SearchPublicGroupInfo[];
 };
 export type ConversationItem = {
   conversationID: string;

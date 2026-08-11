@@ -770,6 +770,12 @@ declare global {
       isSearchGroupID: boolean,
       isSearchGroupName: boolean
     ) => Promise<string>;
+    searchPublicGroups: (
+      operationID: string,
+      joinStatus: number,
+      offset: number,
+      count: number
+    ) => Promise<string>;
     quitGroup: (operationID: string, groupID: string) => Promise<string>;
     dismissGroup: (operationID: string, groupID: string) => Promise<string>;
     changeGroupMute: (
