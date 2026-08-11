@@ -1,5 +1,24 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-08-11 (2) — Core dev đến PR#49 (`389a8940`)
+
+Core `dev` tiến từ PR#47 (`ce755413`) lên PR#49 (`389a8940`) — 2 PR mới, cùng branch `feat/DROPPII-30296(search-public-group)` (follow-up cho `searchPublicGroups` vừa port ở sync trước, chưa kịp publish).
+
+Đã port 2 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#48](https://github.com/droppii/openimsdk-core/pull/48) | feat/DROPPII-30296(search-public-group) | **Breaking Go signature**: `SearchPublicGroups(joinStatus, offset, count)` → `(keyword, joinStatus, offset, count)` | Thêm `keyword: string` vào `SearchPublicGroupsParams`; vì `searchPublicGroups()` chưa publish npm nên đây là sửa trực tiếp, không phải breaking change thật với người dùng |
+| [#49](https://github.com/droppii/openimsdk-core/pull/49) | feat/DROPPII-30296(search-public-group) | Logic nội bộ điền `showName`/`members` mặc định cho conversation nhóm khi rỗng | Type mới `ConversationGroupMember`, field `members?: ConversationGroupMember[]` trên `ConversationItem` |
+
+### Gap cũ phát hiện khi audit PR#49
+
+`LocalConversation.Members` (`[]*ConversationGroupMember`, Go) đã tồn tại **từ trước** baseline sync tuần trước (xác nhận có mặt tại `ce755413`) nhưng chưa từng được port vào `ConversationItem` — bỏ sót từ 1 lần sync sớm hơn, không phải do PR#49 tạo mới. Đã bổ sung.
+
+**Không cần fix SQL** như trường hợp `permissions` tuần trước: cả `Members` và `PeerType` đều có tag `gorm:"-"` (không map cột DB, chỉ là field tính toán runtime trả về qua JSON response) — khác với `Permissions` (`gorm:"column:permissions;type:text"`, có cột DB thật).
+
+Version package: `0.3.0` → `0.3.1` (patch — sửa signature params.ts chưa publish + bổ sung field optional, không breaking thật).
+
 ## Sync 2026-08-11 — Core dev đến PR#47 (`ce755413`)
 
 Core `dev` tiến từ PR#45 (`bd1e1dfa`) lên PR#47 (`ce755413`) — 2 PR mới.

@@ -182,6 +182,7 @@ export type SearchGroupParams = {
   isSearchGroupName: boolean;
 };
 export type SearchPublicGroupsParams = {
+  keyword: string;
   joinStatus: PublicGroupJoinStatus;
   offset: number;
   count: number;

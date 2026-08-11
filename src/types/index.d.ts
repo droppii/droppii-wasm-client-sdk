@@ -772,6 +772,7 @@ declare global {
     ) => Promise<string>;
     searchPublicGroups: (
       operationID: string,
+      keyword: string,
       joinStatus: number,
       offset: number,
       count: number
