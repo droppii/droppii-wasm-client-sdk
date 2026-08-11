@@ -20,6 +20,7 @@ import {
   GroupMessageReaderFilter,
   GroupAtType,
   ViewType,
+  PublicGroupJoinStatus,
 } from './enum';
 
 export type WasmPathConfig = {
@@ -179,6 +180,11 @@ export type SearchGroupParams = {
   keywordList: string[];
   isSearchGroupID: boolean;
   isSearchGroupName: boolean;
+};
+export type SearchPublicGroupsParams = {
+  joinStatus: PublicGroupJoinStatus;
+  offset: number;
+  count: number;
 };
 export type ChangeGroupMuteParams = {
   groupID: string;

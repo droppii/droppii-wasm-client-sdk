@@ -43,6 +43,7 @@ import {
   SearchFriendParams,
   SearchGroupMemberParams,
   SearchGroupParams,
+  SearchPublicGroupsParams,
   SearchLocalParams,
   SendGroupReadReceiptParams,
   SendMsgParams,
@@ -98,6 +99,7 @@ import {
   RtcInviteResults,
   SearchedFriendsInfo,
   SearchMessageResult,
+  SearchPublicGroupsResult,
   SelfUserInfo,
   UserOnlineState,
   WSEvent,
@@ -1471,6 +1473,16 @@ class SDK extends Emitter {
       operationID,
       JSON.stringify(data),
     ]);
+  };
+  searchPublicGroups = (
+    data: SearchPublicGroupsParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<SearchPublicGroupsResult>(
+      'searchPublicGroups',
+      window.searchPublicGroups,
+      [operationID, data.joinStatus, data.offset, data.count]
+    );
   };
   quitGroup = <T>(data: string, operationID = uuidv4()) => {
     return this._invoker<T>('quitGroup ', window.quitGroup, [

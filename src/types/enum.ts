@@ -107,6 +107,24 @@ export enum GroupVisibility {
   Private = 0,
   Public = 1,
 }
+export enum PublicGroupJoinStatus {
+  All = 0,
+  Joined = 1,
+  NotJoined = 2,
+}
+export enum GroupPermission {
+  SendMessage = 'SEND_MESSAGE',
+  PinMessage = 'PIN_MESSAGE',
+  UpdateGroupName = 'UPDATE_GROUP_NAME',
+  UpdateGroupAvatar = 'UPDATE_GROUP_AVATAR',
+  UpdateGroupDescription = 'UPDATE_GROUP_DESCRIPTION',
+  AddMember = 'ADD_MEMBER',
+  RemoveMember = 'REMOVE_MEMBER',
+  AddAdmin = 'ADD_ADMIN',
+  TransferOwnership = 'TRANSFER_OWNERSHIP',
+  ConfigGroupPermission = 'CONFIG_GROUP_PERMISSION',
+  ViewMemberInformation = 'VIEW_MEMBER_INFORMATION',
+}
 export enum GroupAtType {
   AtNormal = 0,
   AtMe = 1,
