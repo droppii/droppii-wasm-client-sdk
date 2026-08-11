@@ -1,5 +1,26 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-08-11 — Core dev đến PR#47 (`ce755413`)
+
+Core `dev` tiến từ PR#45 (`bd1e1dfa`) lên PR#47 (`ce755413`) — 2 PR mới.
+
+Đã port 2 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#46](https://github.com/droppii/openimsdk-core/pull/46) | feat/DROPPII-30105(grant-admin-role) | Fix nil-safety `StringArray.Value()`/`Scan()` (không đổi shape); thêm fallback `DefaultPermissions(roleLevel)` khi server không trả `Permissions`; thêm 11 permission-key string constant (`protocol/constant/group_permission.go`) | Enum `GroupPermission` (DX, không bắt buộc kỹ thuật — field `permissions` đã đúng type `string[]` từ PR#45); đổi `permissions` trên `GroupMemberItem`/`SelfUserInfo` sang `GroupPermission[]` |
+| [#47](https://github.com/droppii/openimsdk-core/pull/47) | feat/DROPPII-30296(search-public-group) | Export mới `SearchPublicGroups` (`wasm/cmd/main.go`, `wasm/wasm_wrapper/wasm_group.go`) | `searchPublicGroups()`, enum `PublicGroupJoinStatus`, type `SearchPublicGroupsParams`/`SearchPublicGroupInfo`/`SearchPublicGroupMemberInfo`/`SearchPublicGroupsResult` |
+
+Gộp PR#46+#47 vào 1 commit vì PR#46 chỉ đổi type của field đã port (không có shape mới độc lập) và cả 2 PR đụng chung nhiều hunk trong cùng file.
+
+### Fix bổ sung — gap SQL schema cho `permissions` (giống lỗi `visibility` tuần trước)
+
+Trong lúc audit, phát hiện `permissions` (port ở PR#45 tuần trước, dùng cho `LocalGroupMember`/`LocalUser`) có cùng loại gap với `visibility`: SQL schema `local_group_members`/`local_users` (`src/sqls/`) chưa có cột `permissions`, và `alter.ts` chưa có migration. Nghiêm trọng hơn: field `permissions` là **array**, và test trực tiếp xác nhận `squel.setFields()` **throw lỗi cứng** khi gặp giá trị array (`"field value must be a string, number, boolean, null or one of the registered custom value types"`) — nghĩa là bất kỳ insert/update `LocalGroupMember`/`LocalUser` nào có `permissions` sẽ crash runtime, không chỉ thiếu cột.
+
+Đã thêm cột `permissions TEXT` vào schema + migration `alter021`, và helper `serializeArrayFields`/`deserializeArrayFields` (`src/utils/value.ts`) áp dụng tại toàn bộ 4 điểm insert/update và 11 điểm select liên quan trong `groupMember.ts`/`users.ts` — JSON-stringify trước khi insert, JSON-parse khi đọc ra.
+
+Version package: `0.2.1` → `0.3.0` (minor — bổ sung method/type mới `searchPublicGroups`).
+
 ## Fix 2026-08-10 — Bổ sung cột `visibility` vào SQL schema `local_groups` (thiếu ở sync PR#44)
 
 Sync `a104f64` (mục "Sync 2026-08-08" bên dưới) port field `visibility` cho PR#44 nhưng chỉ cập nhật type TypeScript (`GroupVisibility` enum, `GroupItem.visibility`) — không cập nhật SQL schema thật của `local_groups` trong `src/sqls/localGroups.ts` (thiếu cột trong `CREATE TABLE`) và `src/api/database/alter.ts` (thiếu `ALTER TABLE` migration cho DB đã tồn tại từ trước). Hậu quả: mọi `insertGroup`/`updateGroup` chứa field `visibility` (đến từ Core WASM qua `wasm/indexdb/group_model.go`) throw lỗi runtime `table local_groups has no column named visibility` trên cả DB mới và DB cũ.
