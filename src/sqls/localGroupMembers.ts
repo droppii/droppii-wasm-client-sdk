@@ -335,7 +335,8 @@ export function insertGroupMember(
     .insert()
     .into('local_group_members')
     .setFields(localGroupMember)
-    .toString();
+    .toString()
+    .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
 
   return db.exec(sql);
 }
@@ -348,7 +349,8 @@ export function batchInsertGroupMember(
     .insert()
     .into('local_group_members')
     .setFieldsRows(localGroupMember)
-    .toString();
+    .toString()
+    .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
 
   return db.exec(sql);
 }

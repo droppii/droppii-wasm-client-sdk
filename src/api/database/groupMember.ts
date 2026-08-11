@@ -192,11 +192,10 @@ export async function getGroupMemberListByGroupID(
   } catch (e) {
     console.error(e);
 
-    return formatResponse(
-      undefined,
-      DatabaseErrorCode.ErrorInit,
-      JSON.stringify(e)
-    );
+    // Return an empty array (not the default '{}') so Core's sync logic
+    // doesn't misread a DB read failure as "no local members exist" and
+    // re-insert everything, hitting the UNIQUE constraint on (group_id, user_id).
+    return formatResponse([], DatabaseErrorCode.ErrorInit, JSON.stringify(e));
   }
 }
 
