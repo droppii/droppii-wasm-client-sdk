@@ -1481,7 +1481,7 @@ class SDK extends Emitter {
     return this._invoker<SearchPublicGroupsResult>(
       'searchPublicGroups',
       window.searchPublicGroups,
-      [operationID, data.joinStatus, data.offset, data.count]
+      [operationID, data.keyword, data.joinStatus, data.offset, data.count]
     );
   };
   quitGroup = <T>(data: string, operationID = uuidv4()) => {
