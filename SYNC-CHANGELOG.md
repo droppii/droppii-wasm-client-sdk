@@ -1,5 +1,19 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-09-08 — Core dev đến PR#67 (`a5c3d59f`)
+
+Core `dev` tiến từ PR#57 (`b7d6004c`) lên PR#67 (`a5c3d59f`) — 9 PR mới (#58-64, #66, #67; không có #65).
+
+Đã port 1 tính năng (net effect PR#66+#67, cùng branch `feat/DROPPII-30745(tag-member-p2)` — PR#66 dùng shape `urlMsg *MsgStruct` ban đầu, PR#67 sửa lại thành `urls []string` trong cùng ngày):
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| #66, #67 | feat/DROPPII-30745(tag-member-p2) | Thêm param `urls []string` vào `CreateTextAtMessage`, `CreateQuoteMessage`, `CreateAdvancedQuoteMessage`; field `Urls` mới trong `AtTextElem`, `QuoteElem` | `urls?: string[]` trong `AtMsgParams`, `QuoteMsgParams`, `AdvancedQuoteMsgParams`; `urls?: string[]` trong `AtTextElem`, `QuoteElem` (entity) |
+
+Bỏ qua (không cần hành động): #58, #59 (nội bộ `onConversationChanged` enrichment), #60 (nội bộ get-conversation-list-after-leave-group), #61 (nội bộ tag-member phase 1, không export), #62, #63, #64 (nội bộ conversation-list filter/sync) — toàn bộ chỉ thêm hàm helper unexported trên `Conversation`/`Group` struct, không có `js.Global().Set` export mới và không đổi `pkg/db/model_struct/`.
+
+Version package: `0.4.0` → `0.5.0`.
+
 ## Fix 2026-08-11 (3) — Consumer báo crash `insertGroupMember` + thiếu `permissions` khi set member
 
 Consumer báo lỗi khi cài package mới:
