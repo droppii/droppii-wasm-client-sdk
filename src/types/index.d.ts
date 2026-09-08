@@ -336,13 +336,15 @@ declare global {
     createQuoteMessage: (
       operationID: string,
       text: string,
-      message: string
+      message: string,
+      urlsStr: string
     ) => Promise<string>;
     createAdvancedQuoteMessage: (
       operationID: string,
       text: string,
       message: string,
-      messageEntityListStr: string
+      messageEntityListStr: string,
+      urlsStr: string
     ) => Promise<string>;
     createAdvancedTextMessage: (
       operationID: string,
@@ -442,7 +444,8 @@ declare global {
       text: string,
       atUserIDList: string[],
       atUsersInfo?: AtUsersInfoItem[],
-      message?: string
+      message?: string,
+      urlsStr?: string
     ) => Promise<string>;
     createSoundMessageByURL: (
       operationID: string,
