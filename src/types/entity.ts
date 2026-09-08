@@ -305,6 +305,7 @@ export type AtTextElem = {
   atUserList: string[];
   atUsersInfo?: AtUsersInfoItem[];
   quoteMessage?: MessageItem;
+  urls?: string[];
   isAtSelf?: boolean;
 };
 export type NotificationElem = {
@@ -389,6 +390,7 @@ export type Picture = {
 export type QuoteElem = {
   text: string;
   quoteMessage: MessageItem;
+  urls?: string[];
 };
 export type SoundElem = {
   uuid: string;

@@ -123,11 +123,13 @@ export type CustomMsgParams = {
 export type QuoteMsgParams = {
   text: string;
   message: string;
+  urls?: string[];
 };
 export type AdvancedQuoteMsgParams = {
   text: string;
   message: MessageItem;
   messageEntityList?: MessageEntity[];
+  urls?: string[];
 };
 export type AdvancedMsgParams = {
   text: string;
@@ -224,6 +226,7 @@ export type AtMsgParams = {
   atUserIDList: string[];
   atUsersInfo?: AtUsersInfoItem[];
   message?: MessageItem;
+  urls?: string[];
 };
 export type SoundMsgParamsByURL = {
   uuid: string;

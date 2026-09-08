@@ -484,7 +484,12 @@ class SDK extends Emitter {
     return this._invoker<MessageItem>(
       'createQuoteMessage',
       window.createQuoteMessage,
-      [operationID, params.text, params.message],
+      [
+        operationID,
+        params.text,
+        params.message,
+        JSON.stringify(params.urls ?? []),
+      ],
       data => {
         // compitable with old version sdk
         return data[0];
@@ -503,6 +508,7 @@ class SDK extends Emitter {
         params.text,
         JSON.stringify(params.message),
         JSON.stringify(params.messageEntityList),
+        JSON.stringify(params.urls ?? []),
       ],
       data => {
         // compitable with old version sdk
@@ -752,6 +758,7 @@ class SDK extends Emitter {
         JSON.stringify(data.atUserIDList),
         JSON.stringify(data.atUsersInfo),
         JSON.stringify(data.message) ?? '',
+        JSON.stringify(data.urls ?? []),
       ],
       data => {
         // compitable with old version sdk
