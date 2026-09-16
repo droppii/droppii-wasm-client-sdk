@@ -1,5 +1,20 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-09-16 — Consumer báo lỗi `UNIQUE constraint failed: local_conversations.conversation_id` khi mount trang chat
+
+Consumer (CRM) báo lỗi console ngay khi vào trang chat, chưa có action nào của user:
+```
+Error: UNIQUE constraint failed: local_conversations.conversation_id
+```
+
+**Nguyên nhân:** `batchInsertConversationList`/`insertConversation` (`src/sqls/localConversations.ts`) dùng `INSERT` thuần, không xử lý xung đột. Core (`internal/conversation_msg/sync.go`) lọc "cần sync" chỉ dựa vào so sánh seq in-memory, không query SQLite trước khi insert — nếu batch chứa `conversation_id` đã tồn tại local (persisted từ session trước, hoặc 2 lần sync chồng nhau lúc mount) thì insert fail ngay tại primary key `conversation_id`.
+
+**Đã fix:** `batchInsertConversationList`/`insertConversation` đổi sang `INSERT OR REPLACE` (string-replace trên SQL do `squel` không hỗ trợ native SQLite REPLACE) — cùng pattern đã áp dụng cho `insertGroupMember`/`batchInsertGroupMember` ở fix 2026-08-11.
+
+**Phạm vi:** chỉ sửa 2 hàm insert của `local_conversations` — các hàm `insert*()` khác trong `src/sqls/` dùng cùng pattern INSERT thuần nhưng chưa có báo lỗi cụ thể nào, giữ nguyên theo quyết định người dùng trước đó.
+
+Version package: `0.5.0` → `0.5.1` (patch).
+
 ## Sync 2026-09-08 — Core dev đến PR#67 (`a5c3d59f`)
 
 Core `dev` tiến từ PR#57 (`b7d6004c`) lên PR#67 (`a5c3d59f`) — 9 PR mới (#58-64, #66, #67; không có #65).

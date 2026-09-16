@@ -196,11 +196,16 @@ export function batchInsertConversationList(
   db: Database,
   conversationList: ClientConversation[]
 ): QueryExecResult[] {
+  // Sync (full or incremental) can hand us a conversation_id that's already
+  // persisted locally — squel has no SQLite "OR REPLACE" of its own, so swap
+  // the standard INSERT it builds for the SQLite upsert form instead of
+  // letting the primary-key conflict raise UNIQUE constraint failed.
   const sql = squel
     .insert()
     .into('local_conversations')
     .setFieldsRows(conversationList)
-    .toString();
+    .toString()
+    .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
 
   return db.exec(sql);
 }
@@ -213,7 +218,8 @@ export function insertConversation(
     .insert()
     .into('local_conversations')
     .setFields(localConversation)
-    .toString();
+    .toString()
+    .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
 
   return db.exec(sql);
 }
