@@ -1,5 +1,19 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-09-24 — Core dev đến PR#72 (`c3779ee1`)
+
+Core `dev` tiến từ PR#67 (`a5c3d59f`) lên PR#72 (`c3779ee1`) — 5 PR mới (#68-72).
+
+Không port PR nào — toàn bộ chỉ đổi `internal/`, không đụng `open_im_sdk/`, `wasm/`, `sdk_struct/`.
+
+Bỏ qua (không cần hành động):
+- #68 (feat/handle-sync-bot-data): thêm `fillBotFaceURL` (backfill avatar bot conversation từ field `Ex`/`FaceURL` đã port), thêm `LocalConversation.UnmarshalJSON` lenient-parse (Go giờ chấp nhận số dạng string hoặc number khi parse JSON — chỉ đổi cách Go đọc, không đổi shape Go trả về JS), panic-recovery cho `LongConnMgr`
+- #69, #70 (feat/show-member-count-crm): file `bot.go` mới — helper nội bộ refresh member count cho bot group, chỉ dùng field `LocalGroup` đã port sẵn
+- #71 (feat/get-seq-msg-user): tái dùng hàm nội bộ có sẵn, không export mới
+- #72 (feat/typing-keepalive-2s): chỉnh timing constant cho typing indicator (10s → 2s), không export mới
+
+Version package: không đổi (không có code JS nào thay đổi).
+
 ## Fix 2026-09-16 — Consumer báo lỗi `UNIQUE constraint failed: local_conversations.conversation_id` khi mount trang chat
 
 Consumer (CRM) báo lỗi console ngay khi vào trang chat, chưa có action nào của user:
