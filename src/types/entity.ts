@@ -228,6 +228,7 @@ export type ConversationItem = {
   ex?: string;
   peerType?: string;
   members?: ConversationGroupMember[];
+  lastOpenTime?: number;
 };
 export type ConversationGroupMember = {
   userID: string;
@@ -490,6 +491,10 @@ export type AdvancedGetMessageResult = {
   errCode: number;
   errMsg: string;
   messageList: MessageItem[];
+};
+
+export type GetFirstUnreadMessageResult = {
+  message: MessageItem | null;
 };
 
 export type GetPinnedMessageListResult = {

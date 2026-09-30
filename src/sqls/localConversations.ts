@@ -32,6 +32,7 @@ export function localConversations(db: Database): QueryExecResult[] {
             'has_read_seq' integer,
             'msg_destruct_time' integer default 604800,
             'is_msg_destruct' numeric default false,
+            'last_open_time' integer,
             primary key ('conversation_id')
         )
     `

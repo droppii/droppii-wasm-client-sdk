@@ -91,6 +91,7 @@ import {
   GroupApplicationItem,
   GroupItem,
   GroupMemberItem,
+  GetFirstUnreadMessageResult,
   GetPinnedMessageListResult,
   IMConfig,
   MessageItem,
@@ -303,6 +304,13 @@ class SDK extends Emitter {
       'getAdvancedHistoryMessageListReverse',
       window.getAdvancedHistoryMessageListReverse,
       [operationID, JSON.stringify(params)]
+    );
+  };
+  getFirstUnreadMessage = (conversationID: string, operationID = uuidv4()) => {
+    return this._invoker<GetFirstUnreadMessageResult>(
+      'getFirstUnreadMessage',
+      window.getFirstUnreadMessage,
+      [operationID, conversationID]
     );
   };
   getAdvancedHistoryMessageListApp = (

@@ -5,6 +5,7 @@ export function alterTable(db: Database) {
   alter380(db);
   alter383(db);
   alter021(db);
+  alter060(db);
 }
 
 function alter351(db: Database) {
@@ -57,6 +58,18 @@ function alter021(db: Database) {
     db.exec(
       `
         ALTER TABLE local_users ADD COLUMN permissions TEXT;
+        `
+    );
+  } catch (error) {
+    // alter table error
+  }
+}
+
+function alter060(db: Database) {
+  try {
+    db.exec(
+      `
+        ALTER TABLE local_conversations ADD COLUMN last_open_time integer;
         `
     );
   } catch (error) {
