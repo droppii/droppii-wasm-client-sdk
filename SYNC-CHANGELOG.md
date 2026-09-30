@@ -1,5 +1,19 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-09-30 — Core dev đến PR#73 (`6ba238b6`)
+
+Core `dev` tiến từ PR#72 (`c3779ee1`) lên PR#73 (`6ba238b6`) — 1 PR mới.
+
+Đã port 1 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#73](https://github.com/droppii/openimsdk-core/pull/73) | feat/DROPPII-30564(Unread-message-indicator) | Export mới `getFirstUnreadMessage(conversationID)` (trả `{ message: MsgStruct \| null }`, ghi thời điểm mở thread lên server); field mới `LastOpenTime` trên `LocalConversation` (gorm column `last_open_time`, `wasm/indexdb/temp_struct` có `lastOpenTime,omitempty`) | `getFirstUnreadMessage()`, type `GetFirstUnreadMessageResult`, `window.getFirstUnreadMessage`, `ConversationItem.lastOpenTime`; cột `last_open_time` trong schema `local_conversations` + migration `alter060` |
+
+**Vì sao phải thêm cột SQL (không chỉ type):** khác `peerType`/`members` (gorm `"-"`, không có cột), `LastOpenTime` là cột DB thật — Go ghi qua `UpdateColumnsConversation(..., {"last_open_time": ...})`, syncer conversation cũng so sánh/cập nhật field này. Thiếu cột thì mọi insert/update conversation có `lastOpenTime ≠ 0` fail `table local_conversations has no column named last_open_time` (đã tái hiện bằng sql.js + squel). Trường hợp này xảy ra ngay khi server có `LastOpenTime` cho user — sau lần gọi `getFirstUnreadMessage` đầu tiên từ bất kỳ client nào (web hoặc mobile).
+
+Version package: `0.5.1` → `0.6.0` (minor — thêm method mới).
+
 ## Sync 2026-09-24 — Core dev đến PR#72 (`c3779ee1`)
 
 Core `dev` tiến từ PR#67 (`a5c3d59f`) lên PR#72 (`c3779ee1`) — 5 PR mới (#68-72).
