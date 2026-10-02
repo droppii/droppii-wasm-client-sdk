@@ -1,5 +1,23 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-10-02 — Core dev đến PR#76 (`6d568b7b`)
+
+Core `dev` tiến từ PR#73 (`6ba238b6`) lên PR#76 (`6d568b7b`) — 3 PR mới (#74-76).
+
+Đã port 1 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#75](https://github.com/droppii/openimsdk-core/pull/75) | feat/func-to-set-permission | Export mới `setGroupAdminPermissions(req)` và `setGroupMemberPermissions(req)` — bật/tắt permission cho toàn bộ admin / toàn bộ member thường của group trong 1 lần gọi. `req` là JSON `SetGroupRolePermissionsReq {groupID, enablePermissions, disablePermissions}`; Core báo lỗi nếu cả 2 list đều rỗng. Sau khi gọi API thành công, Core tự sync lại group + member. Thêm constant `NO_PERMISSION` | `setGroupAdminPermissions()`, `setGroupMemberPermissions()`, type `SetGroupRolePermissionsParams`, `window.setGroupAdminPermissions`, `window.setGroupMemberPermissions`, `GroupPermission.NoPermission` |
+
+**Ý nghĩa `NO_PERMISSION`:** Core lưu giá trị này vào `permissions` khi member không có quyền nào. Còn list `permissions` rỗng nghĩa là dùng quyền mặc định theo role. Consumer cần phân biệt 2 trường hợp này khi hiển thị quyền.
+
+Bỏ qua (không cần hành động):
+- #74 (feat/DROPPII-30564(Unread-message-indicator), follow-up của #73): `getFirstUnreadMessage` giờ bỏ qua message có seq < `minSeq` của conversation; `markConversationMessageAsRead` khi `unreadCount == 0` sẽ kéo `hasReadSeq` lên `maxSeq` từ server thay vì return luôn. Chỉ đổi logic nội bộ, không đổi signature hay shape trả về.
+- #76 (feat/DROPPII-30924(Handle-change-bot-type)): chỉ thêm 4 constant trong `pkg/constant` (`SESSION_CREATED`, `SESSION_CLOSED`, `SESSION_STATE_UPDATED`, `BOT_UPDATED` — giá trị field `key` trong detail của `OnRecvCustomBusinessMessage`). Core chưa dùng các constant này ở đâu, không có export mới.
+
+Version package: `0.6.0` → `0.7.0` (minor — thêm method mới).
+
 ## Sync 2026-09-30 — Core dev đến PR#73 (`6ba238b6`)
 
 Core `dev` tiến từ PR#72 (`c3779ee1`) lên PR#73 (`6ba238b6`) — 1 PR mới.
