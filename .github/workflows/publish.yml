@@ -76,6 +76,25 @@ jobs:
         with:
           node-version: 22
 
+      # npm processes a new publish asynchronously, so the version can take a few
+      # minutes to show up in the registry. Installing before then fails with
+      # ERR_PNPM_NO_MATCHING_VERSION. Poll the same metadata document pnpm reads.
+      - name: Wait for the new version to be available on npm
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          for i in $(seq 1 40); do
+            if curl -fsS -H "Accept: application/vnd.npm.install-v1+json" \
+                "https://registry.npmjs.org/@droppii-org%2fwasm-client-sdk" \
+                | jq -e --arg v "$VERSION" '.versions[$v]' > /dev/null; then
+              echo "@droppii-org/wasm-client-sdk@$VERSION is available"
+              exit 0
+            fi
+            echo "Waiting for @droppii-org/wasm-client-sdk@$VERSION ($i/40)..."
+            sleep 15
+          done
+          echo "::error::@droppii-org/wasm-client-sdk@$VERSION was not available on npm after 10 minutes"
+          exit 1
+
       - name: Bump @droppii-org/wasm-client-sdk in packages/chat-sdk
         id: bump
         run: |
