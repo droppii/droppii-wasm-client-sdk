@@ -765,6 +765,14 @@ declare global {
       operationID: string,
       memberInfo: string
     ) => Promise<string>;
+    setGroupAdminPermissions: (
+      operationID: string,
+      req: string
+    ) => Promise<string>;
+    setGroupMemberPermissions: (
+      operationID: string,
+      req: string
+    ) => Promise<string>;
     joinGroup: (
       operationID: string,
       groupID: string,

@@ -127,6 +127,15 @@ export enum GroupPermission {
   TransferOwnership = 'TRANSFER_OWNERSHIP',
   ConfigGroupPermission = 'CONFIG_GROUP_PERMISSION',
   ViewMemberInformation = 'VIEW_MEMBER_INFORMATION',
+  // Stored when a member has no permissions. An empty list means the role default.
+  NoPermission = 'NO_PERMISSION',
+}
+// Value of the `key` field inside the detail of OnRecvCustomBusinessMessage
+export enum BusinessNotificationKey {
+  SessionCreated = 'SESSION_CREATED',
+  SessionClosed = 'SESSION_CLOSED',
+  SessionStateUpdated = 'SESSION_STATE_UPDATED',
+  BotUpdated = 'BOT_UPDATED',
 }
 export enum GroupAtType {
   AtNormal = 0,

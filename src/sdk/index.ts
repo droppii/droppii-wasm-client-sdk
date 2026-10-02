@@ -52,6 +52,7 @@ import {
   SetConversationMsgDestructTimeParams,
   SetConversationDraftParams,
   SetGroupRoleParams,
+  SetGroupRolePermissionsParams,
   SetGroupVerificationParams,
   SetMemberPermissionParams,
   SetMessageLocalExParams,
@@ -1473,6 +1474,26 @@ class SDK extends Emitter {
       operationID,
       JSON.stringify(data),
     ]);
+  };
+  setGroupAdminPermissions = <T>(
+    data: SetGroupRolePermissionsParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<T>(
+      'setGroupAdminPermissions ',
+      window.setGroupAdminPermissions,
+      [operationID, JSON.stringify(data)]
+    );
+  };
+  setGroupMemberPermissions = <T>(
+    data: SetGroupRolePermissionsParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<T>(
+      'setGroupMemberPermissions ',
+      window.setGroupMemberPermissions,
+      [operationID, JSON.stringify(data)]
+    );
   };
   joinGroup = <T>(data: JoinGroupParams, operationID = uuidv4()) => {
     return this._invoker<T>('joinGroup ', window.joinGroup, [

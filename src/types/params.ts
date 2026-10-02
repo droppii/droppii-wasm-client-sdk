@@ -372,6 +372,11 @@ export type SearchGroupMemberParams = {
   offset: number;
   count: number;
 };
+export type SetGroupRolePermissionsParams = {
+  groupID: string;
+  enablePermissions?: GroupPermission[];
+  disablePermissions?: GroupPermission[];
+};
 export type SetMemberPermissionParams = {
   rule: AllowType;
   groupID: string;
