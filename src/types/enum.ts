@@ -127,6 +127,8 @@ export enum GroupPermission {
   TransferOwnership = 'TRANSFER_OWNERSHIP',
   ConfigGroupPermission = 'CONFIG_GROUP_PERMISSION',
   ViewMemberInformation = 'VIEW_MEMBER_INFORMATION',
+  // Stored when a member has no permissions. An empty list means the role default.
+  NoPermission = 'NO_PERMISSION',
 }
 export enum GroupAtType {
   AtNormal = 0,
