@@ -12,9 +12,11 @@ Core `dev` tiến từ PR#73 (`6ba238b6`) lên PR#76 (`6d568b7b`) — 3 PR mới
 
 **Ý nghĩa `NO_PERMISSION`:** Core lưu giá trị này vào `permissions` khi member không có quyền nào. Còn list `permissions` rỗng nghĩa là dùng quyền mặc định theo role. Consumer cần phân biệt 2 trường hợp này khi hiển thị quyền.
 
+Bổ sung thêm (không phải export mới, thêm cho tiện dùng):
+- #76 (feat/DROPPII-30924(Handle-change-bot-type)): Core thêm 4 constant trong `pkg/constant` cho giá trị field `key` trong detail của `OnRecvCustomBusinessMessage`. Core chưa dùng các constant này, chỉ khai báo. JS SDK thêm enum `BusinessNotificationKey` (`SessionCreated`, `SessionClosed`, `SessionStateUpdated`, `BotUpdated`) để consumer so sánh `key` qua enum thay vì string.
+
 Bỏ qua (không cần hành động):
 - #74 (feat/DROPPII-30564(Unread-message-indicator), follow-up của #73): `getFirstUnreadMessage` giờ bỏ qua message có seq < `minSeq` của conversation; `markConversationMessageAsRead` khi `unreadCount == 0` sẽ kéo `hasReadSeq` lên `maxSeq` từ server thay vì return luôn. Chỉ đổi logic nội bộ, không đổi signature hay shape trả về.
-- #76 (feat/DROPPII-30924(Handle-change-bot-type)): chỉ thêm 4 constant trong `pkg/constant` (`SESSION_CREATED`, `SESSION_CLOSED`, `SESSION_STATE_UPDATED`, `BOT_UPDATED` — giá trị field `key` trong detail của `OnRecvCustomBusinessMessage`). Core chưa dùng các constant này ở đâu, không có export mới.
 
 Version package: `0.6.0` → `0.7.0` (minor — thêm method mới).
 
