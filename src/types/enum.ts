@@ -130,6 +130,13 @@ export enum GroupPermission {
   // Stored when a member has no permissions. An empty list means the role default.
   NoPermission = 'NO_PERMISSION',
 }
+// Value of the `key` field inside the detail of OnRecvCustomBusinessMessage
+export enum BusinessNotificationKey {
+  SessionCreated = 'SESSION_CREATED',
+  SessionClosed = 'SESSION_CLOSED',
+  SessionStateUpdated = 'SESSION_STATE_UPDATED',
+  BotUpdated = 'BOT_UPDATED',
+}
 export enum GroupAtType {
   AtNormal = 0,
   AtMe = 1,
