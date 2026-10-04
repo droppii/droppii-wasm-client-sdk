@@ -1,5 +1,17 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Fix 2026-10-04 — `batchInsertConversationList` lỗi `10001 "{}"`, conversation không vào DB local
+
+Tài khoản CRM staging đăng nhập lần đầu: Core gọi `batchInsertConversationList` với ~300 conversation, cả batch trả về `{"errCode":10001,"errMsg":"{}"}`. Các conversation đó không được lưu local. Lần reload sau Core coi chúng là conversation mới.
+
+**Nguyên nhân:** Core gửi batch bằng `wasm/indexdb/temp_struct.LocalConversation`, mọi field đều `omitempty`, nên mỗi dòng chỉ có các field khác zero (dòng `sn_…` chỉ có 4 field, dòng group có thêm `groupID`/`ex`/`faceURL`, vài dòng có `lastOpenTime`). `squel.setFieldsRows` bắt mọi dòng của 1 câu INSERT phải cùng bộ field, khác là throw `All fields in subsequent rows must match the fields in the first row`. `JSON.stringify(Error)` ra `{}` nên lỗi không có nội dung.
+
+**Đã fix:** `batchInsertConversationList` chia dòng theo bộ field và chạy 1 câu `INSERT OR REPLACE` cho mỗi bộ. Field nào dòng không có thì cột nhận default của schema, giống hệt `insertConversation` từng dòng. Đã chạy lại batch 300 dòng thật bắt được trên staging bằng sql.js + squel: code cũ throw, code mới lưu đủ 300 dòng, kết quả giống hệt insert từng dòng, chạy lại lần 2 vẫn 300 dòng.
+
+**Phạm vi:** chỉ `batchInsertConversationList`. Các batch insert khác dùng `setFieldsRows` (message, group member, unread message) nhận `model_struct` không `omitempty` từ Core nên các dòng luôn cùng bộ field.
+
+Version package: `0.7.0` → `0.7.1` (patch).
+
 ## Sync 2026-10-02 — Core dev đến PR#76 (`6d568b7b`)
 
 Core `dev` tiến từ PR#73 (`6ba238b6`) lên PR#76 (`6d568b7b`) — 3 PR mới (#74-76).

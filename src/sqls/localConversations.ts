@@ -201,14 +201,33 @@ export function batchInsertConversationList(
   // persisted locally — squel has no SQLite "OR REPLACE" of its own, so swap
   // the standard INSERT it builds for the SQLite upsert form instead of
   // letting the primary-key conflict raise UNIQUE constraint failed.
-  const sql = squel
-    .insert()
-    .into('local_conversations')
-    .setFieldsRows(conversationList)
-    .toString()
-    .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
+  const results: QueryExecResult[] = [];
+  groupRowsByFields(conversationList).forEach(rows => {
+    const sql = squel
+      .insert()
+      .into('local_conversations')
+      .setFieldsRows(rows)
+      .toString()
+      .replace(/^INSERT INTO/, 'INSERT OR REPLACE INTO');
+    results.push(...db.exec(sql));
+  });
+  return results;
+}
 
-  return db.exec(sql);
+// Core omits zero-value fields per row, but squel needs every row of one INSERT
+// to carry the same fields — so build one INSERT per distinct field set.
+function groupRowsByFields(rows: ClientConversation[]): ClientConversation[][] {
+  const groups = new Map<string, ClientConversation[]>();
+  rows.forEach(row => {
+    const fields = Object.keys(row).sort().join(',');
+    const group = groups.get(fields);
+    if (group) {
+      group.push(row);
+    } else {
+      groups.set(fields, [row]);
+    }
+  });
+  return [...groups.values()];
 }
 
 export function insertConversation(
