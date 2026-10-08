@@ -1,5 +1,18 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-10-05 — Core dev đến PR#79 (`091d01b1`)
+
+Core `dev` tiến từ PR#76 (`6d568b7b`) lên PR#79 (`091d01b1`) — 3 PR mới (#77-79).
+
+Không port PR nào. Cả 3 PR chỉ đổi `internal/` và `pkg/common/`, không đụng `wasm/`, `open_im_sdk/`, `sdk_struct/`, `pkg/db/` hay `pkg/sdk_params_callback/`.
+
+Bỏ qua (không cần hành động):
+- #77 (fix/DROPPII-31052-unjoined-group-fresh-data): với group mà user chưa join, Core lấy max seq lịch sử từ server, và đọc lại thông tin group từ server trong `GetSpecifiedGroupsInfo`/`FetchGroupOrError` (file mới `internal/group/unjoined.go`). Chỉ là logic nội bộ trên các field `LocalGroup` đã port.
+- #78 (fix/conversation-listener-nil-ctx-panic): truyền `ctx` vào mọi lời gọi `doUpdateConversation`, và mỗi command tự recover panic trong `DoListener`. Trước đây một panic làm dừng hẳn vòng xử lý conversation, nên `OnSyncServerFinish` không bao giờ bắn sau khi reload. Không có export mới; `common.RunCmdRecovered` là helper Go nội bộ.
+- #79 (fix/history-skip-deleted-placeholders): `getAdvancedHistoryMessageList`/`Reverse` bỏ qua bản ghi rỗng server trả cho seq đã xoá (status ≥ `MsgStatusHasDeleted`, không có `clientMsgID`) và thông báo bot bị ẩn, rồi kéo tiếp các đoạn seq cho tới khi đủ `count` tin. Shape trả về `{messageList, isEnd}` giữ nguyên; consumer chỉ không còn nhận các tin `contentType 0` rỗng.
+
+Version package: không đổi (không có code JS nào thay đổi).
+
 ## Fix 2026-10-04 — `batchInsertConversationList` lỗi `10001 "{}"`, conversation không vào DB local
 
 Tài khoản CRM staging đăng nhập lần đầu: Core gọi `batchInsertConversationList` với ~300 conversation, cả batch trả về `{"errCode":10001,"errMsg":"{}"}`. Các conversation đó không được lưu local. Lần reload sau Core coi chúng là conversation mới.
