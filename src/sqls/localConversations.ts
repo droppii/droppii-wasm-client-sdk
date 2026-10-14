@@ -3,6 +3,11 @@ import { Database, QueryExecResult } from '@jlongster/sql.js';
 
 export type ClientConversation = { [key: string]: any };
 
+// Pinned first, pinned newest pin first (falling back to activity when pin_time is unset), then latest activity.
+const conversationListOrder = `case when is_pinned = 1 then 0 else 1 end,
+  case when is_pinned = 1 and pin_time > 0 then pin_time
+       else max(latest_msg_send_time, draft_text_time) end DESC`;
+
 export function localConversations(db: Database): QueryExecResult[] {
   return db.exec(
     `
@@ -33,6 +38,7 @@ export function localConversations(db: Database): QueryExecResult[] {
             'msg_destruct_time' integer default 604800,
             'is_msg_destruct' numeric default false,
             'last_open_time' integer,
+            'pin_time' integer,
             primary key ('conversation_id')
         )
     `
@@ -53,7 +59,7 @@ export function getConversationByUserID(
 export function getAllConversationList(db: Database): QueryExecResult[] {
   return db.exec(
     `
-        select * from local_conversations where latest_msg_send_time > 0 order by case when is_pinned=1 then 0 else 1 end,max(latest_msg_send_time,draft_text_time) desc;
+        select * from local_conversations where latest_msg_send_time > 0 order by ${conversationListOrder};
     `
   );
 }
@@ -102,9 +108,7 @@ export function getConversationListSplit(
     SELECT *
     FROM local_conversations
     WHERE latest_msg_send_time > 0
-    ORDER BY case
-                 when is_pinned = 1 then 0
-                 else 1 end, max(latest_msg_send_time, draft_text_time) DESC
+    ORDER BY ${conversationListOrder}
     LIMIT ${count} OFFSET ${offset}
     `
   );
@@ -369,9 +373,11 @@ export function unPinConversation(
   conversationID: string,
   isPinned: number
 ): QueryExecResult[] {
+  // Re-pinning keeps the original pin time; unpinning clears it.
   return db.exec(`
   update local_conversations
     set is_pinned=${isPinned},
+    pin_time=case when ${isPinned} = 1 then case when is_pinned = 1 and pin_time > 0 then pin_time else ${Date.now()} end else 0 end,
     draft_text_time=case when draft_text = "" then 0 else draft_text_time end
     where conversation_id = "${conversationID}"
   `);
