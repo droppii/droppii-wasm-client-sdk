@@ -1,5 +1,26 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-10-14 — Core dev đến PR#83 (`f1548e41`)
+
+Core `dev` tiến từ PR#79 (`091d01b1`) lên PR#83 (`f1548e41`) — 4 PR mới (#80-83).
+
+Đã port 1 PR Core sang JS SDK:
+
+| PR Core | Branch | Thay đổi | Bổ sung ở JS SDK |
+|---|---|---|---|
+| [#83](https://github.com/droppii/openimsdk-core/pull/83) | feat/DROPPII-30837(pin-thread) | Thêm cột DB thật `LocalConversation.PinTime` (`pin_time`, JSON `pinTime`): thời điểm ghim thread. Conversation syncer, `UpdateConversationForSync` và fallback local của `SetConversation` đều ghi cột này. Danh sách conversation sắp xếp: thread ghim trước, trong nhóm ghim thì ghim mới nhất lên đầu (thread chưa có `pinTime` dùng thời gian tin nhắn/nháp cuối), sau đó tới thread thường theo hoạt động mới nhất | Cột `pin_time` trong create-table + migration `alter080`; `ORDER BY` của `getAllConversationList`/`getConversationListSplit` giống câu SQL native của Core; `unPinConversation` ghi `pin_time` giống Core (ghim lại giữ thời điểm cũ, ghim mới lấy `Date.now()`, bỏ ghim về 0); field `ConversationItem.pinTime` |
+
+**Vì sao bắt buộc phải có cột:** syncer của Core luôn gửi `pin_time` trong map update, `UpdateConversationForSync` luôn gửi `pinTime`, thread đã ghim gửi `pinTime` trong batch insert. Khi bảng `local_conversations` chưa có cột, sql.js báo `no such column: pin_time` / `has no column named pin_time` (đã tái hiện bằng sql.js + squel trên code cũ), nên các lần ghi conversation đó đều lỗi `10001`. Đây là cùng kiểu lỗi với `last_open_time` ở bản 0.6.0.
+
+**Lưu ý triển khai:** `openIM.wasm` trên staging (upload lúc 2026-10-14 10:04 +07) đã có PR#83. Web consumer còn dùng bản ≤ `0.7.1` sẽ lỗi các lần ghi trên cho tới khi lên bản này. Mọi web consumer phải lên bản này trước khi build lại `openIM.wasm` production có PR#83.
+
+Bỏ qua (không cần hành động):
+- #80 (fix/get-msg-list-event): lịch sử tin nhắn App giờ giữ cả tin custom có `extension` là `custom_message_event` (so sánh không phân biệt hoa thường), ngoài `Order`/`Product`. Chỉ đổi bộ lọc nội bộ.
+- #81 (feat/DROPPII-30924(business-notification)): khi server gửi `detail` dạng object, `OnRecvCustomBusinessMessage` giờ nhận chuỗi JSON thô của object đó (trước đây Core unmarshal lỗi và bỏ notification). Callback vẫn nhận string, không đổi signature. Consumer nên `JSON.parse` `detail` cho cả 2 dạng.
+- #82 (feat/move-config-time-to-server): khoảng thời gian không mở thread để ẩn chỉ báo tin chưa đọc của `getFirstUnreadMessage` giờ lấy từ server (`unreadIndicatorIdleSeconds`, mặc định 5 ngày nếu server không trả). Chỉ là logic nội bộ.
+
+Version package: `0.7.1` → `0.8.0` (minor — thêm cột DB + field mới).
+
 ## Sync 2026-10-05 — Core dev đến PR#79 (`091d01b1`)
 
 Core `dev` tiến từ PR#76 (`6d568b7b`) lên PR#79 (`091d01b1`) — 3 PR mới (#77-79).
