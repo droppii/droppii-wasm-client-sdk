@@ -6,6 +6,7 @@ export function alterTable(db: Database) {
   alter383(db);
   alter021(db);
   alter060(db);
+  alter080(db);
 }
 
 function alter351(db: Database) {
@@ -70,6 +71,18 @@ function alter060(db: Database) {
     db.exec(
       `
         ALTER TABLE local_conversations ADD COLUMN last_open_time integer;
+        `
+    );
+  } catch (error) {
+    // alter table error
+  }
+}
+
+function alter080(db: Database) {
+  try {
+    db.exec(
+      `
+        ALTER TABLE local_conversations ADD COLUMN pin_time integer;
         `
     );
   } catch (error) {

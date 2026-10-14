@@ -229,6 +229,7 @@ export type ConversationItem = {
   peerType?: string;
   members?: ConversationGroupMember[];
   lastOpenTime?: number;
+  pinTime?: number;
 };
 export type ConversationGroupMember = {
   userID: string;
