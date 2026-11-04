@@ -26,9 +26,10 @@ Follow these steps to obtain the static resources required for WebAssembly (WASM
 
    The files to be copied are:
 
-   - `openIM.wasm`
    - `sql-wasm.wasm`
    - `wasm_exec.js`
+
+   `openIM.wasm` is not shipped in this package. It is built from the Go core (`droppii/openimsdk-core`); serve it yourself and pass its URL as `coreWasmPath` to `getSDK` (default `/openIM.wasm`).
 
 2. After copying the files, import the `wasm_exec.js` file in your `index.html` file using a `<script>` tag.
 
