@@ -1,5 +1,25 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Sync 2026-11-11 — Core dev đến PR#88 (`7fbf8792`)
+
+Core `dev` tiến từ PR#83 (`f1548e41`) lên PR#88 (`7fbf8792`) — 3 PR mới (#85, #86, #88; #84 và #87 không có trên `dev`).
+
+Không port PR nào. Không PR nào đụng `wasm/`, không thêm hay đổi hàm mà wasm export, không đổi struct đi qua ranh giới wasm. PR#88 là squash commit chứ không phải merge commit, nên `scripts/audit_core_prs.py` (lọc `--merges`) không liệt kê; đã tìm thấy qua `git log --first-parent`.
+
+Bỏ qua (không cần hành động):
+- #85 (feat/sdk-network-log-debug): thêm log mạng HTTP/WS để debug, gồm `SetNetworkLogListener`/`SetNetworkLogEnabled`, callback `OnNetworkLogListener` và field `IMConfig.networkLogEnabled`. Các hàm này chỉ có cho mobile, `wasm/cmd/main.go` không đăng ký nên web không có chỗ nhận log. Config `initSDK` của JS không gửi field này và Go mặc định là tắt.
+- #86 (feat/dp-31177): thêm báo cáo crash (`pkg/crash`, `SetCrashReportListener`/`EnableCrashReport`/`DebugTriggerCrash`, chỉ có cho mobile) và `defer exportGuard` chặn panic ở mọi hàm export. Không đổi tham số hay kiểu trả về của hàm nào wasm gọi tới (`GetLoginStatus` chỉ đặt tên cho giá trị trả về).
+- #88 (fix(msg): never send a video message with a local media URL): nếu sau khi upload mà URL video hoặc ảnh snapshot vẫn là `blob:`/`data:`, `sendMessage` báo lỗi `video message still has a local media URL` thay vì gửi tin có link không mở được. Chỉ là logic nội bộ.
+
+**Hành vi web sẽ đổi khi `openIM.wasm` host phục vụ được build từ Core có PR#86/#88** (không cần sửa code JS):
+- `sendMessage` gọi khi login chưa xong giờ lỗi `ResourceLoadNotCompleteError`. Trước đây `messageCall_` truyền tên hàm rỗng nên bỏ qua bước kiểm tra login.
+- Panic trong Core trả về callback với mã `SdkInternalError` thay vì làm sập wasm; `setXxxListener(null)` không làm gì.
+- Gửi video upload lỗi sẽ thất bại thay vì gửi đi tin có URL `blob:`/`data:`.
+
+Kiểm chứng: `GOOS=js GOARCH=wasm go build ./wasm/cmd` tại `7fbf8792` (go1.23.2) build thành công với `pkg/crash` mới.
+
+Version package: không đổi (không có code JS nào thay đổi).
+
 ## Sync 2026-10-14 — Core dev đến PR#83 (`f1548e41`)
 
 Core `dev` tiến từ PR#79 (`091d01b1`) lên PR#83 (`f1548e41`) — 4 PR mới (#80-83).
