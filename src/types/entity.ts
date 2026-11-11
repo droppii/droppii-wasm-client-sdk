@@ -256,6 +256,8 @@ export type MessageItem = {
   isPinned?: boolean;
   pinnedByUserID?: string;
   pinnedTime?: number;
+  isEdited?: boolean;
+  editTime?: number;
   status: MessageStatus;
   isReact?: boolean;
   isExternalExtensions?: boolean;
@@ -367,6 +369,7 @@ export type AttachedInfoElem = {
   inEncryptStatus: boolean;
   burnDuration: number;
   hasReadTime: number;
+  editTime?: number;
   messageEntityList?: MessageEntity[];
   uploadProgress?: UploadProgress;
 };
