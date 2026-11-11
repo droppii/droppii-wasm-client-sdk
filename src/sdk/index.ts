@@ -7,6 +7,7 @@ import {
   AccessFriendApplicationParams,
   AccessGroupApplicationParams,
   AccessMessageParams,
+  EditMessageParams,
   AddFriendParams,
   AdvancedMsgParams,
   AdvancedQuoteMsgParams,
@@ -610,6 +611,15 @@ class SDK extends Emitter {
       operationID,
       data.conversationID,
       data.clientMsgID,
+    ]);
+  };
+
+  editMessage = (data: EditMessageParams, operationID = uuidv4()) => {
+    return this._invoker<MessageItem>('editMessage', window.editMessage, [
+      operationID,
+      data.conversationID,
+      data.clientMsgID,
+      data.content,
     ]);
   };
 
