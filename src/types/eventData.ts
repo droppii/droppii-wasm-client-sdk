@@ -39,6 +39,7 @@ export type EventDataMap = {
   [CbEvents.OnNewConversation]: ConversationItem[];
   [CbEvents.OnConversationUserInputStatusChanged]: ConversationInputStatus;
   [CbEvents.OnNewRecvMessageRevoked]: RevokedInfo;
+  [CbEvents.OnRecvMessageEdited]: MessageItem;
   [CbEvents.OnRecvC2CReadReceipt]: ReceiptInfo[];
   [CbEvents.OnRecvGroupReadReceipt]: GroupMessageReceiptInfo;
   [CbEvents.OnRecvNewMessage]: MessageItem;

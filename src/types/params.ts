@@ -280,6 +280,9 @@ export type AccessMessageParams = {
   conversationID: string;
   clientMsgID: string;
 };
+export type EditMessageParams = AccessMessageParams & {
+  content: string;
+};
 export type TypingUpdateParams = {
   recvID: string;
   msgTip: string;
