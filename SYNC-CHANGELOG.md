@@ -1,5 +1,13 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## DOC-20 — Báo lỗi rõ khi tải `openIM.wasm` thất bại (0.8.1)
+
+Không port từ Core; sửa phía JS wrapper. Không đổi `.core-sync-state.json`.
+
+- `initializeWasm` ném lỗi `WASM_INIT_FAILED` thay vì trả `null` khi URL rỗng hoặc fetch/instantiate/`go.run` lỗi, không đặt `initialized`. Khi `instantiateStreaming` lỗi (ví dụ sai MIME) thì thử lại bằng `arrayBuffer()`.
+- `login()` và `_invoker` reject `WsResponse` có `errMsg: 'WASM_NOT_INITIALIZED'` khi Go chưa chạy, thay cho `TypeError`.
+- `getSDK()` coi `coreWasmPath` rỗng là `/openIM.wasm` và tạo lại instance sau khi khởi tạo thất bại.
+
 ## Sync 2026-11-11 — Core dev đến PR#88 (`7fbf8792`)
 
 Core `dev` tiến từ PR#83 (`f1548e41`) lên PR#88 (`7fbf8792`) — 3 PR mới (#85, #86, #88; #84 và #87 không có trên `dev`).
