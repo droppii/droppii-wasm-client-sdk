@@ -1,7 +1,12 @@
 import { initDatabaseAPI, workerPromise } from '@/api';
 import Emitter from '@/utils/emitter';
 import { v4 as uuidv4 } from 'uuid';
-import { getGO, initializeWasm, getGoExitPromise } from './initialize';
+import {
+  getGO,
+  initializeWasm,
+  getGoExitPromise,
+  reset as resetWasm,
+} from './initialize';
 
 import {
   AccessFriendApplicationParams,
@@ -114,10 +119,16 @@ import {
   Platform,
 } from '@/types/enum';
 import { logBoxStyleValue } from '@/utils';
+const notInitializedError = () => ({
+  errCode: 10001,
+  errMsg: 'WASM_NOT_INITIALIZED',
+});
+
 class SDK extends Emitter {
   private wasmInitializedPromise: Promise<any>;
   private goExitPromise: Promise<void> | undefined;
   private goExisted = false;
+  initFailed = false;
   private tryParse = true;
   private isLogStandardOutput = true;
 
@@ -127,6 +138,10 @@ class SDK extends Emitter {
     initDatabaseAPI(debug);
     this.isLogStandardOutput = debug;
     this.wasmInitializedPromise = initializeWasm(url);
+    // Let getSDK() rebuild the instance (e.g. with a new URL) after a failed load.
+    this.wasmInitializedPromise.catch(() => {
+      this.initFailed = true;
+    });
     this.goExitPromise = getGoExitPromise();
 
     if (this.goExitPromise) {
@@ -141,6 +156,11 @@ class SDK extends Emitter {
           this.goExisted = true;
         });
     }
+  }
+
+  private isGoRunning() {
+    const go = getGO();
+    return !!go && !go.exited && !this.goExisted && !this.initFailed;
   }
 
   _logWrap(...args: any[]) {
@@ -172,8 +192,8 @@ class SDK extends Emitter {
           functionName.slice(1).toLowerCase()) as any,
       } as WsResponse<T>;
       try {
-        if (!getGO() || getGO().exited || this.goExisted) {
-          throw 'wasm exist already, fail to run';
+        if (!this.isGoRunning()) {
+          throw notInitializedError();
         }
 
         let data = await func(...args);
@@ -226,7 +246,18 @@ class SDK extends Emitter {
     );
 
     await workerPromise;
-    await this.wasmInitializedPromise;
+    try {
+      await this.wasmInitializedPromise;
+    } catch (error) {
+      this._logWrap('SDK => wasm init failed', error);
+    }
+    if (!this.isGoRunning()) {
+      throw {
+        event: 'Login',
+        operationID,
+        ...notInitializedError(),
+      };
+    }
     window.commonEventFunc(event => {
       try {
         this._logWrap(
@@ -1812,17 +1843,20 @@ let instance: SDK;
 export function getSDK(config?: WasmPathConfig): SDK {
   const {
     sqlWasmPath,
-    coreWasmPath = '/openIM.wasm',
+    coreWasmPath: configuredWasmPath,
     debug = true,
   } = config || {};
+  // chat-sdk passes '' when no path is configured, which skips the default.
+  const coreWasmPath = configuredWasmPath || '/openIM.wasm';
   if (typeof window === 'undefined') {
     return {} as SDK;
   }
 
-  if (instance) {
+  if (instance && !instance.initFailed) {
     return instance;
   }
 
+  resetWasm();
   instance = new SDK(coreWasmPath, debug);
 
   if (sqlWasmPath) {
