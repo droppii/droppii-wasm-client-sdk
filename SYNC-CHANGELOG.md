@@ -1,5 +1,14 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## Port chưa merge — editMessage (DOC-3.3, WP2 openimsdk-core @ `7e3c9cbb8d00`)
+
+Core chưa merge vào dev. Audit core-sync kế tiếp sẽ ghi vào `.core-sync-state.json` sau khi core merge.
+
+Đã port:
+- `editMessage({conversationID, clientMsgID, content})` → `window.editMessage(operationID, conversationID, clientMsgID, content)`, trả `MessageItem` đã cập nhật.
+- Event `OnRecvMessageEdited` (`CbEvents`, payload `MessageItem`).
+- `MessageItem.isEdited`, `MessageItem.editTime`, `AttachedInfoElem.editTime` (tuỳ chọn). Không thêm cột DB: `editTime` nằm trong `attachedInfo`.
+
 ## DOC-20 — Báo lỗi rõ khi tải `openIM.wasm` thất bại (0.8.1)
 
 Không port từ Core; sửa phía JS wrapper. Không đổi `.core-sync-state.json`.

@@ -393,6 +393,12 @@ declare global {
       conversationID: string,
       clientMsgID: string
     ) => Promise<string>;
+    editMessage: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string,
+      content: string
+    ) => Promise<string>;
     pinMsg: (
       operationID: string,
       conversationID: string,

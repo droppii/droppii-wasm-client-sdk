@@ -23,6 +23,7 @@ export enum CbEvents {
   OnRecvMessageRevoked = 'OnRecvMessageRevoked',
   OnNewRecvMessageRevoked = 'OnNewRecvMessageRevoked',
   OnRecvMessagePinned = 'OnRecvMessagePinned',
+  OnRecvMessageEdited = 'OnRecvMessageEdited',
   OnRecvC2CReadReceipt = 'OnRecvC2CReadReceipt',
   OnRecvGroupReadReceipt = 'OnRecvGroupReadReceipt',
   OnConversationChanged = 'OnConversationChanged',
