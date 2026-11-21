@@ -10,6 +10,7 @@ import {
   GroupMemberItem,
   GroupMessageReceiptInfo,
   MessageItem,
+  MessageReactions,
   ReceiptInfo,
   RevokedInfo,
   SelfUserInfo,
@@ -40,6 +41,7 @@ export type EventDataMap = {
   [CbEvents.OnConversationUserInputStatusChanged]: ConversationInputStatus;
   [CbEvents.OnNewRecvMessageRevoked]: RevokedInfo;
   [CbEvents.OnRecvMessageEdited]: MessageItem;
+  [CbEvents.OnRecvMessageReactionChanged]: MessageReactions;
   [CbEvents.OnRecvC2CReadReceipt]: ReceiptInfo[];
   [CbEvents.OnRecvGroupReadReceipt]: GroupMessageReceiptInfo;
   [CbEvents.OnRecvNewMessage]: MessageItem;

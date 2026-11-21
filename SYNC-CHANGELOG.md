@@ -1,5 +1,16 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## DOC-33 — Reaction tin nhắn (0.9.0)
+
+Core chưa merge vào dev. Audit core-sync kế tiếp sẽ ghi vào `.core-sync-state.json` sau khi core merge. Cần `openIM.wasm` build từ Core có reaction (gói openimsdk-core của DOC-33).
+
+Đã port:
+- `toggleMessageReaction({conversationID, clientMsgID, emoji})` → `window.toggleMessageReaction(operationID, conversationID, clientMsgID, emoji)`, trả `MessageReactions` (`{clientMsgID, reactions}`) đã parse.
+- `getMessagesReactions({conversationID, clientMsgIDs})` → `window.getMessagesReactions(operationID, conversationID, clientMsgIDsJSON)`; mảng id được `JSON.stringify` vì Go nhận chuỗi JSON. Trả `{items: MessageReactions[]}`.
+- Event `OnRecvMessageReactionChanged` (`CbEvents`, payload `MessageReactions`: `reactions` là mảng JSON, không bọc thêm).
+- Kiểu `ReactionUser`, `MessageReaction` (`emoji`, `count`, `users`, `firstAddedAt`). Không thêm cột DB.
+
+
 ## DOC-3 — editMessage (0.8.2)
 
 Core đã merge vào `dev` (#90, `296ed119`). Audit core-sync kế tiếp sẽ ghi vào `.core-sync-state.json`. `editMessage` chỉ chạy được khi `openIM.wasm` được build từ Core có #90.

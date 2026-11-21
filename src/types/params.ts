@@ -283,6 +283,13 @@ export type AccessMessageParams = {
 export type EditMessageParams = AccessMessageParams & {
   content: string;
 };
+export type ToggleMessageReactionParams = AccessMessageParams & {
+  emoji: string;
+};
+export type GetMessagesReactionsParams = {
+  conversationID: string;
+  clientMsgIDs: string[];
+};
 export type TypingUpdateParams = {
   recvID: string;
   msgTip: string;

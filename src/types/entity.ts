@@ -431,6 +431,27 @@ export type AdvancedRevokeContent = {
   sourceMessageSenderNickname: string;
 };
 
+export type ReactionUser = {
+  userID: string;
+  nickname: string;
+};
+
+export type MessageReaction = {
+  emoji: string;
+  count: number;
+  users: ReactionUser[];
+  firstAddedAt: number;
+};
+
+export type MessageReactions = {
+  clientMsgID: string;
+  reactions: MessageReaction[];
+};
+
+export type GetMessagesReactionsResult = {
+  items: MessageReactions[];
+};
+
 export type RevokedInfo = {
   revokerID: string;
   revokerRole: number;

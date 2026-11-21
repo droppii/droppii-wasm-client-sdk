@@ -399,6 +399,17 @@ declare global {
       clientMsgID: string,
       content: string
     ) => Promise<string>;
+    toggleMessageReaction: (
+      operationID: string,
+      conversationID: string,
+      clientMsgID: string,
+      emoji: string
+    ) => Promise<string>;
+    getMessagesReactions: (
+      operationID: string,
+      conversationID: string,
+      clientMsgIDsJSON: string
+    ) => Promise<string>;
     pinMsg: (
       operationID: string,
       conversationID: string,
