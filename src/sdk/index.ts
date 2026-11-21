@@ -13,6 +13,8 @@ import {
   AccessGroupApplicationParams,
   AccessMessageParams,
   EditMessageParams,
+  ToggleMessageReactionParams,
+  GetMessagesReactionsParams,
   AddFriendParams,
   AdvancedMsgParams,
   AdvancedQuoteMsgParams,
@@ -102,6 +104,8 @@ import {
   GetPinnedMessageListResult,
   IMConfig,
   MessageItem,
+  MessageReactions,
+  GetMessagesReactionsResult,
   PinnedMsgInfo,
   PublicUserItem,
   RtcInviteResults,
@@ -652,6 +656,28 @@ class SDK extends Emitter {
       data.clientMsgID,
       data.content,
     ]);
+  };
+
+  toggleMessageReaction = (
+    data: ToggleMessageReactionParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<MessageReactions>(
+      'toggleMessageReaction',
+      window.toggleMessageReaction,
+      [operationID, data.conversationID, data.clientMsgID, data.emoji]
+    );
+  };
+
+  getMessagesReactions = (
+    data: GetMessagesReactionsParams,
+    operationID = uuidv4()
+  ) => {
+    return this._invoker<GetMessagesReactionsResult>(
+      'getMessagesReactions',
+      window.getMessagesReactions,
+      [operationID, data.conversationID, JSON.stringify(data.clientMsgIDs)]
+    );
   };
 
   pinMsg = <T>(data: AccessMessageParams, operationID = uuidv4()) => {
