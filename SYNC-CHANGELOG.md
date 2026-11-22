@@ -1,5 +1,14 @@
 # Nhật ký đồng bộ Core → JS SDK
 
+## DOC-39 — Tin phiên team realtime (0.9.1)
+
+Core chưa merge vào dev (gói openimsdk-core của DOC-39, commit `4b50fe7cbd95`). Audit core-sync kế tiếp sẽ ghi vào `.core-sync-state.json` sau khi core merge. Cần `openIM.wasm` build từ Core có `OnRecvTeamSessionMessage`.
+
+Đã port:
+- Event `OnRecvTeamSessionMessage` (`CbEvents`): payload là chuỗi JSON `{key, data}` (kiểu `TeamSessionMessage`); `data` vẫn là chuỗi JSON, consumer `JSON.parse` một lần. Core không ghi DB, không tạo hội thoại, không tính chưa đọc.
+- Không có method hay cột DB mới.
+
+
 ## DOC-33 — Reaction tin nhắn (0.9.0)
 
 Core chưa merge vào dev. Audit core-sync kế tiếp sẽ ghi vào `.core-sync-state.json` sau khi core merge. Cần `openIM.wasm` build từ Core có reaction (gói openimsdk-core của DOC-33).
