@@ -584,3 +584,9 @@ export type CallingRoomData = {
   invitation?: RtcInvite;
   roomID: string;
 };
+
+// Payload of CbEvents.OnRecvTeamSessionMessage: `data` is a JSON string, parse it once.
+export type TeamSessionMessage = {
+  key: string;
+  data: string;
+};

@@ -58,6 +58,7 @@ export enum CbEvents {
 
   UploadComplete = 'UploadComplete',
   OnRecvCustomBusinessMessage = 'OnRecvCustomBusinessMessage',
+  OnRecvTeamSessionMessage = 'OnRecvTeamSessionMessage',
   OnUserStatusChanged = 'OnUserStatusChanged',
   OnUploadLogsProgress = 'OnUploadLogsProgress',
 
