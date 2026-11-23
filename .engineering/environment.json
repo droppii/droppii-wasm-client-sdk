@@ -1,0 +1,8 @@
+{
+  "kind": "ainery-environment-contract-v2",
+  "component": "wasm-client-sdk",
+  "connectors": ["github"],
+  "environments": {},
+  "partners": [],
+  "notes": "Derived on 2026-11-24 from droppii/manifest origin/main (cluster/argocd ApplicationSets vn-stg/vn-beta/vn-prod, apps/base + apps/overlay ConfigMaps; SealedSecrets read by key name only), the Ainery data-broker configs (cluster/ainery/control-plane/hk-stg/data-broker.json, cluster/ainery/brokers/hk-prod/data-broker.json), Ainery's inventories (datastores.json, partners.json, onboarding-inventory.json) and the repository's own code/config. OpenIM WASM client SDK. Not deployed by droppii/manifest, so environments is empty. No external partner."
+}
