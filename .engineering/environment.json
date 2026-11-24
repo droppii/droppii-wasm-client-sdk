@@ -1,0 +1,8 @@
+{
+  "component": "wasm-client-sdk",
+  "connectors": [
+    "github"
+  ],
+  "environments": {},
+  "partners": []
+}
